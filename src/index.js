@@ -53,12 +53,12 @@ export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
  * Encodes binary data into Bech32 encoding.
  *
  * Ordinarily, you may want to use [`encode`](#encode) because it converts
- * binary data to five-bit sequences automatically.
+ * binary data to an array of 5-bit integers automatically.
  *
  * @param {string} prefix
  *   human-readable prefix to place at the beginning of the encoding
  * @param {Uint8Array} data
- *   5-bit sequence with data to encode
+ *   array of 5-bit integers with data to encode
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
  *
@@ -75,7 +75,7 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
   // 2. Expand the human-readable prefix into the beginning of the buffer
   expandPrefix(prefix, buffer.subarray(0, 2 * prefix.length + 1));
 
-  // 3. Copy `data` into 5-bit sequence
+  // 3. Copy `data` into the output
   const dataBuffer = buffer.subarray(2 * prefix.length + 1, buffer.length - CHECKSUM_LENGTH);
   dataBuffer.set(data);
 
@@ -103,17 +103,35 @@ export function encode(prefix: string, data: Uint8Array): string {
   return encode5BitArray(prefix, to5BitArray(data));
 }
 
+/**
+ * Decodes data from Bech32 encoding into an array of 5-bit integers.
+ *
+ * Ordinarily, you may want to use [`decode`](#decode) because it automatically
+ * converts the array of 5-bit integers into an ordinary `Uint8Array`.
+ *
+ * @param {string} message
+ *   Bech32-encoded message
+ * @returns {Object}
+ *   Decoded object with `prefix` and `data` fields, which contain the human-readable
+ *   prefix and the array of 5-bit integers respectively.
+ *
+ * @api public
+ */
 export function decodeTo5BitArray(message: string): { prefix: string, data: FiveBitArray } {
-  // Check some preconditions
+  // Check preconditions
+
+  // 1. Message length
   if (message.length > MAX_LENGTH) {
     throw new TypeError(`Message too long; max ${MAX_LENGTH} expected`);
   }
 
+  // 2. Mixed case
   let hasLowerCase = false;
   let hasUpperCase = false;
   for (let i = 0; i < message.length; i++) {
     const ord = message.charCodeAt(i);
 
+    // 3. Allowed chars in the encoding
     if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
       throw new TypeError(`Invalid char in message: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
     }
@@ -126,17 +144,24 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
 
   const lowerCaseMsg = message.toLowerCase();
 
+  // 4. Existence of the separator char
   const sepIdx = lowerCaseMsg.lastIndexOf('1');
   if (sepIdx < 0) {
     throw new Error('No separator char ("1") found');
   }
+
+  // 5. Placing of the separator char in the message
   if (sepIdx > message.length - CHECKSUM_LENGTH - 1) {
     throw new Error(`Data part of the message too short (at least ${CHECKSUM_LENGTH} chars expected)`);
   }
 
   const prefix = lowerCaseMsg.substring(0, sepIdx);
 
+  // Checked within `decodeWithPrefix`:
+  // 6. Invalid chars in the data part of the message
   const bitArray = decodeWithPrefix(prefix, lowerCaseMsg.substring(sepIdx + 1));
+
+  // 7. Checksum
   if (!verifyChecksum(bitArray)) {
     throw new Error('Invalid checksum');
   }
@@ -148,6 +173,17 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
   };
 }
 
+/**
+ * Decodes data from Bech32 encoding into an array of 5-bit integers.
+ *
+ * @param {string} message
+ *   Bech32-encoded message
+ * @returns {Object}
+ *   Decoded object with `prefix` and `data` fields, which contain the human-readable
+ *   prefix and the decoded binary data respectively.
+ *
+ * @api public
+ */
 export function decode(message: string): { prefix: string, data: Uint8Array } {
   const { prefix, data: bitArray } = decodeTo5BitArray(message);
   return { prefix, data: from5BitArray(bitArray) };
