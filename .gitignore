@@ -1,5 +1,10 @@
+# General stuff
 /node_modules
 npm-debug.log
+
+# As the package does not have a single non-dev dependency, package locking
+# is somewhat an overkill
+package-lock.json
 
 # Transpiled files
 /lib
