@@ -2,7 +2,20 @@
   "name": "bech32-buffer",
   "version": "0.0.1",
   "description": "Bech32 encoding for byte buffers",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/slowli/bech32-buffer.git"
+  },
+  "bugs": {
+    "url": "https://github.com/slowli/bech32-buffer/issues"
+  },
+  "engines": {
+    "node": ">=4"
+  },
   "main": "lib/index.js",
+  "files": [
+    "lib"
+  ],
   "scripts": {
     "test": "mocha -r babel-register",
     "compile": "babel src/ -d lib/",
