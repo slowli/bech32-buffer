@@ -1,0 +1,28 @@
+dist: trusty
+sudo: false
+cache:
+  directories:
+    - node_modules
+branches:
+  only:
+    - master
+    # tags
+    - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+
+language: node_js
+node_js:
+  - 4
+  - 6
+  - 8
+env:
+  - TESTSUITE=test
+matrix:
+  include:
+    - node_js: 8
+      env: TESTSUITE=lint
+
+before_script:
+  - npm install -g mocha-cli
+script:
+  - if [[ "$TESTSUITE" == "lint" ]]; then npm run lint; fi
+  - if [[ "$TESTSUITE" == "test" ]]; then npm test; fi
