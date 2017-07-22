@@ -16,4 +16,14 @@
   ],
   "author": "Alex Ostrovski <ostrovski.alex@gmail.com>",
   "license": "Apache-2.0",
+  "devDependencies": {
+    "babel-cli": "^6.24.1",
+    "babel-eslint": "^7.2.3",
+    "babel-preset-es2015": "^6.24.1",
+    "babel-preset-flow": "^6.23.0",
+    "babel-register": "^6.24.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb-base": "^11.2.0",
+    "eslint-plugin-import": "^2.7.0",
+    "flow-bin": "^0.50.0",
 }
