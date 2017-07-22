@@ -1,0 +1,8 @@
+/node_modules
+npm-debug.log
+
+# Transpiled files
+/lib
+
+# Coverage reports
+/coverage

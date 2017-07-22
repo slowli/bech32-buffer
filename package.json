@@ -1,0 +1,19 @@
+{
+  "name": "bech32-buffer",
+  "version": "0.0.1",
+  "description": "Bech32 encoding for byte buffers",
+  "main": "lib/index.js",
+  "scripts": {
+    "test": "mocha -r babel-register",
+    "compile": "babel src/ -d lib/",
+    "prepare": "npm run compile",
+    "lint": "eslint --ignore-path .gitignore . && flow check"
+  },
+  "keywords": [
+    "bech32",
+    "base32",
+    "bitcoin"
+  ],
+  "author": "Alex Ostrovski <ostrovski.alex@gmail.com>",
+  "license": "Apache-2.0",
+}
