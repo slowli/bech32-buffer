@@ -31,3 +31,17 @@ script:
 
 after_success:
   - if [[ "$TESTSUITE" == "cover" ]]; then npm run report-to-coveralls; fi
+
+jobs:
+  include:
+    - stage: deploy
+      node_js: 8
+      env: TESTSUITE=
+      script: skip
+      deploy:
+        skip_cleanup: true
+        provider: npm
+        email: ostrovski.alex@gmail.com
+        api_key: $NPM_KEY
+        on:
+          tags: true
