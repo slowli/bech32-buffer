@@ -86,9 +86,7 @@ describe('bech32', () => {
 
     vectors.invalidNonAddresses.forEach(({ data, reason }) => {
       it(`should detect problem with "${data}" for reason: ${reason}`, () => {
-        expect(() => {
-          const decoded = bech32.decode(data);
-        }).to.throw(new RegExp(reason, 'i'));
+        expect(() => bech32.decode(data)).to.throw(new RegExp(reason, 'i'));
       });
     });
   });
