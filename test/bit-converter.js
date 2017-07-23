@@ -82,5 +82,21 @@ describe('bit-converter', () => {
       const output = new Uint8Array(2);
       expect(fromBits(input, 5, output)).to.equalBytes([127, 43]);
     });
+
+    it('should throw on too long padding', () => {
+      const input = new Uint8Array([15, 28, 0]);
+      // The input is 15 bits, i.e., a single complete byte + 7-bit padding.
+      // This padding is excessive, because the last 5-bit component
+      // is completely ignored.
+
+      const output = new Uint8Array(1);
+      expect(() => fromBits(input, 5, output)).to.throw(/excessive.*padding/i);
+    });
+
+    it('should throw on non-zero padding', () => {
+      const input = new Uint8Array([15, 28, 21, 17]);
+      const output = new Uint8Array(2);
+      expect(() => fromBits(input, 5, output)).to.throw(/non-zero.*padding/i);
+    });
   });
 });

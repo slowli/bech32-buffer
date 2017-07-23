@@ -50,6 +50,15 @@ function convert<IL: BitsNumber, OL: BitsNumber>(
       // to accumulator bits to get the trailing bit group
       dst[rem.pos] = (rem.acc << (dstBits - rem.bits)) & max;
     }
+  } else {
+    // Truncate the remaining padding, but make sure that it is zeroed and not
+    // overly long first
+    if (rem.bits >= srcBits) {
+      throw new Error(`Excessive padding: ${rem.bits} (max ${srcBits - 1} allowed)`);
+    }
+    if (rem.acc % (1 << rem.bits) !== 0) {
+      throw new Error('Non-zero padding');
+    }
   }
 }
 
