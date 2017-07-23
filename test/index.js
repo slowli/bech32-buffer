@@ -58,5 +58,14 @@ describe('bech32', () => {
         expect(decScript).to.equalBytes(script.substring(4));
       });
     });
+
+    vectors.invalidAddresses.forEach(({ address, reason }) => {
+      it(`should detect problem with invalid address "${address}" from test vectors`, () => {
+        expect(() => {
+          const decoded = bech32.decodeTo5BitArray(address);
+          bech32.from5BitArray(decoded.data.subarray(1));
+        }).to.throw(new RegExp(reason, 'i'));
+      });
+    });
   });
 });

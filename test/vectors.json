@@ -46,5 +46,23 @@
       "encoded": "split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w",
       "hrp": "split"
     }
+  ],
+  "invalidAddresses": [
+    {
+      "address": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5",
+      "reason": "checksum"
+    },
+    {
+      "address": "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3q0sL5k7",
+      "reason": "mixed-case"
+    },
+    {
+      "address": "tb1pw508d6qejxtdg4y5r3zarqfsj6c3",
+      "reason": "excessive padding"
+    },
+    {
+      "address": "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3pjxtptv",
+      "reason": "non-zero padding"
+    }
   ]
 }
