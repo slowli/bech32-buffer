@@ -18,7 +18,32 @@ and improved error detection. This library generalizes Bech32 to encode any
 
 ## Usage
 
-### Encoding Data
+### Encoding data
+
+```none
+function encode(prefix, data)
+```
+
+Encodes binary `data` with the specified human-readable `prefix` into a Bech32 string.
+
+#### Arguments
+
+- **prefix:** string  
+  Human-readable prefix to hint what kind of data Bech32 encodes. Must contain
+  ASCII chars in the range 33-126
+- **data:** Uint8Array  
+  Binary data to encode
+
+#### Return value
+
+String containing:
+
+1. `prefix`
+2. `'1'` separator char
+3. `data` encoded with the variant of base32 encoding used by Bech32, and
+4. 6-char checksum calculated based on `prefix` and `data`
+
+#### Example
 
 ```javascript
 var bech32 = require('bech32-buffer');
@@ -27,9 +52,36 @@ var encoded = bech32.encode('test', data);
 // 'test1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqql6aptf'
 ```
 
-### Decoding Data
+### Decoding data
+
+```none
+function decode(data)
+```
+
+Extracts human-readable prefix and binary data from the Bech32-encoded string.
+
+#### Arguments
+
+- **data:** string  
+  String to decode
+
+#### Return value
+
+An object with the following fields:
+
+- **prefix:** string  
+  Human-readable prefix
+- **data:** Uint8Array  
+  Binary data encoded into the input string
+
+The encoding may fail for a variety of reasons (e.g., invalid checksum, or Invalid
+chars in the input). In this case, `decode()` throws an exception
+with a descriptive message.
+
+#### Example
 
 ```javascript
+var bech32 = require('bech32-buffer');
 var data = 'lost1qsyq7yqh9gk0szs5';
 var decoded = bech32.decode(data);
 // {
