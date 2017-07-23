@@ -1,5 +1,13 @@
 # Bech32 Encoding for Arbitrary Buffers
 
+[![Build status][travis-image]][travis-url]
+[![Code style][code-style-image]][code-style-url]
+
+[travis-image]: https://img.shields.io/travis/slowli/chai-bytes.svg?style=flat-square
+[travis-url]: https://travis-ci.org/slowli/chai-bytes
+[code-style-image]: https://img.shields.io/badge/code%20style-Airbnb-brightgreen.svg?style=flat-square
+[code-style-url]: https://github.com/airbnb/javascript
+
 **Bech32** is a new proposed Bitcoin address format specified in [BIP 173][bip-173].
 Among its advantages are: better adaptability to QR codes and in voice conversations,
 and improved error detection. This library generalizes Bech32 to encode any
