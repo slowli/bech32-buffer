@@ -20,6 +20,7 @@
     "test": "mocha -r babel-register",
     "cover": "cross-env NODE_ENV=test nyc mocha",
     "report-cover": "nyc report",
+    "report-to-coveralls": "nyc report --reporter=text-lcov | coveralls",
     "compile": "babel src/ -d lib/",
     "prepare": "npm run compile",
     "lint": "eslint --ignore-path .gitignore . && flow check"
@@ -40,6 +41,7 @@
     "babel-register": "^6.24.1",
     "chai": "^4.1.0",
     "chai-bytes": "^0.1.1",
+    "coveralls": "^2.13.1",
     "cross-env": "^5.0.1",
     "eslint": "^3.19.0",
     "eslint-config-airbnb-base": "^11.2.0",
