@@ -54,6 +54,11 @@ describe('bech32', () => {
 
       expect(() => bech32.encode(prefix, data)).to.throw(/too long/i);
     });
+
+    it('should not encode message with invalid chars in prefix', () => {
+      const prefix = 'Ю';
+      expect(() => bech32.encode(prefix, new Uint8Array(10))).to.throw(/invalid char/i);
+    });
   });
 
   describe('decode', () => {

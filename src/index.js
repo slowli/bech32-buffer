@@ -74,6 +74,13 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
     throw new Error(`Message to be produced is too long (max ${MAX_ENC_LENGTH} supported)`);
   }
 
+  for (let i = 0; i < prefix.length; i++) {
+    const ord = prefix.charCodeAt(i);
+    if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
+      throw new TypeError(`Invalid char in prefix: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
+    }
+  }
+
   const buffer = ((new Uint8Array(len): any): FiveBitArray);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
