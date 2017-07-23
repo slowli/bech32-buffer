@@ -98,5 +98,15 @@ describe('bit-converter', () => {
       const output = new Uint8Array(2);
       expect(() => fromBits(input, 5, output)).to.throw(/non-zero.*padding/i);
     });
+
+    it('should throw on large bit length', () => {
+      expect(() => fromBits(new Uint8Array(1), 9, new Uint8Array(1)))
+        .to.throw(RangeError);
+    });
+
+    it('should throw on small bit length', () => {
+      expect(() => fromBits(new Uint8Array(1), 0, new Uint8Array(1)))
+        .to.throw(RangeError);
+    });
   });
 });
