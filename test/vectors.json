@@ -64,5 +64,33 @@
       "address": "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3pjxtptv",
       "reason": "non-zero padding"
     }
+  ],
+  "invalidNonAddresses": [
+    {
+      "data": "bc1",
+      "reason": "too short"
+    },
+    {
+      "data": "bc1sj6c3",
+      "reason": "too short"
+    },
+    {
+      "data": "tb1qrp33g0q5c5txsp9arysrx4k6zdkfs4nce4xj0gdcccefvpysxf3pjxtptv4nce4xj0gdcccefvpysxf3pjxtptv",
+      "reason": "too long"
+    },
+    {
+      "data": "bcfsj6c3",
+      "reason": "no separator"
+    },
+    {
+      "data": "Ю1pw508d6qejxtdg4y5r3zarqfsj6c3",
+      "reason": "invalid char",
+      "comment": "Invalid char is 'Ю' in the human-readable part"
+    },
+    {
+      "data": "tb1pw508d6qejxtdg4y5r3zabqfsj6c3",
+      "reason": "invalid char",
+      "comment": "Differs from the previous vector; the invalid char is 'b' in the data part"
+    }
   ]
 }

@@ -60,10 +60,18 @@ describe('bech32', () => {
     });
 
     vectors.invalidAddresses.forEach(({ address, reason }) => {
-      it(`should detect problem with invalid address "${address}" from test vectors`, () => {
+      it(`should detect problem with invalid test address "${address}"`, () => {
         expect(() => {
           const decoded = bech32.decodeTo5BitArray(address);
           bech32.from5BitArray(decoded.data.subarray(1));
+        }).to.throw(new RegExp(reason, 'i'));
+      });
+    });
+
+    vectors.invalidNonAddresses.forEach(({ data, reason }) => {
+      it(`should detect problem with "${data}" for reason: ${reason}`, () => {
+        expect(() => {
+          const decoded = bech32.decode(data);
         }).to.throw(new RegExp(reason, 'i'));
       });
     });
