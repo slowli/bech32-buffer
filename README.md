@@ -1,10 +1,13 @@
 # Bech32 Encoding for Arbitrary Buffers
 
 [![Build status][travis-image]][travis-url]
+[![Code coverage][coveralls-image]][coveralls-url]
 [![Code style][code-style-image]][code-style-url]
 
 [travis-image]: https://img.shields.io/travis/slowli/bech32-buffer.svg?style=flat-square
 [travis-url]: https://travis-ci.org/slowli/bech32-buffer
+[coveralls-image]: https://img.shields.io/coveralls/slowli/bech32-buffer.svg?style=flat-square
+[coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
 [code-style-image]: https://img.shields.io/badge/code%20style-Airbnb-brightgreen.svg?style=flat-square
 [code-style-url]: https://github.com/airbnb/javascript
 
