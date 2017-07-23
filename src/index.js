@@ -15,8 +15,8 @@ import {
 const MIN_CHAR_CODE = 33;
 // Maximum char code that could be present in the encoded message
 const MAX_CHAR_CODE = 126;
-// Maximum message length
-const MAX_LENGTH = 90;
+// Maximum encoded message length
+const MAX_ENC_LENGTH = 90;
 
 type FiveBitArray = BitArray<5>;
 
@@ -70,6 +70,10 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
     data.length +                      // five-bit data encoding
     CHECKSUM_LENGTH;                   // checksum
 
+  if (len - prefix.length > MAX_ENC_LENGTH) {
+    throw new Error(`Message to be produced is too long (max ${MAX_ENC_LENGTH} supported)`);
+  }
+
   const buffer = ((new Uint8Array(len): any): FiveBitArray);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
@@ -121,8 +125,8 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
   // Check preconditions
 
   // 1. Message length
-  if (message.length > MAX_LENGTH) {
-    throw new TypeError(`Message too long; max ${MAX_LENGTH} expected`);
+  if (message.length > MAX_ENC_LENGTH) {
+    throw new TypeError(`Message too long; max ${MAX_ENC_LENGTH} expected`);
   }
 
   // 2. Mixed case

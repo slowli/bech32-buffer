@@ -38,6 +38,22 @@ describe('bech32', () => {
           .to.equal(address.toLowerCase());
       });
     });
+
+    it('should not encode an overly long message', () => {
+      const prefix = 'test';
+      const data = new Uint8Array(50);
+      // 55 * 8 / 5 = 88 bytes; + 5 bytes for the prefix and separator
+
+      expect(() => bech32.encode(prefix, data)).to.throw(/too long/i);
+    });
+
+    it('should not encode an overly long message with long prefix', () => {
+      const prefix = 'testtesttesttesttesttesttesttesttesttesttesttesttesttesttest';
+      const data = new Uint8Array(20);
+      // 20 * 8 / 5 = 32 bytes; + 61 bytes for the prefix and separator
+
+      expect(() => bech32.encode(prefix, data)).to.throw(/too long/i);
+    });
   });
 
   describe('decode', () => {
