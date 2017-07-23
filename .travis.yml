@@ -15,12 +15,6 @@ node_js:
   - 6
 env:
   - TESTSUITE=test
-matrix:
-  include:
-    - node_js: 8
-      env: TESTSUITE=cover
-    - node_js: 8
-      env: TESTSUITE=lint
 
 before_script:
   - npm install -g mocha-cli
@@ -34,6 +28,10 @@ after_success:
 
 jobs:
   include:
+    - node_js: 8
+      env: TESTSUITE=cover
+    - node_js: 8
+      env: TESTSUITE=lint
     - stage: deploy
       node_js: 8
       env: TESTSUITE=
