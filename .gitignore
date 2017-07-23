@@ -10,4 +10,5 @@ package-lock.json
 /lib
 
 # Coverage reports
+/.nyc_output
 /coverage
