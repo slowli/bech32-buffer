@@ -7,6 +7,8 @@ import {
   CHECKSUM_LENGTH,
   createChecksum,
   verifyChecksum,
+  encode,
+  decode,
 } from '../src/encoding';
 import { toBits } from '../src/bit-converter';
 
@@ -64,6 +66,24 @@ describe('Bech32 low-level encoding', () => {
       toBits(new Uint8Array([0x75, 0x1e]), 5, buffer.subarray(6, 10));
 
       expect(buffer).to.satisfy(verifyChecksum);
+    });
+  });
+
+  describe('encode', () => {
+    it('should encode a zero array', () => {
+      const buffer = new Uint8Array(8);
+      expect(encode(buffer)).to.equal('qqqqqqqq');
+    });
+
+    it('should encode a short array', () => {
+      const buffer = new Uint8Array([4, 8, 15, 16, 23]);
+      expect(encode(buffer)).to.equal('yg0sh');
+    });
+  });
+
+  describe('decode', () => {
+    it('should decode a short array', () => {
+      expect(decode('yg0sh')).to.equalBytes([4, 8, 15, 16, 23]);
     });
   });
 });
