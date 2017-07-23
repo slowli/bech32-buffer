@@ -86,10 +86,32 @@ export function createChecksum(buffer: FiveBitArray): void {
   }
 }
 
+/**
+ * Encodes an array of 5-bit groups into a string.
+ *
+ * @param {Uint8Array} buffer
+ * @returns {string}
+ *
+ * @api private
+ */
 export function encode(buffer: FiveBitArray): string {
   return Array.prototype.reduce.call(buffer, (acc, bits) => acc + CHARSET[bits], '');
 }
 
+/**
+ * Decodes a string into an array of 5-bit groups.
+ *
+ * @param {string} message
+ * @param {Uint8Array} [dst]
+ *   Optional array to write the output to. If not specified, the array is created.
+ * @returns {Uint8Array}
+ *   Array with the result of decoding
+ *
+ * @throws {Error}
+ *   if there are characters in `message` not present in the encoding alphabet
+ *
+ * @api private
+ */
 export function decode(message: string, dst?: FiveBitArray): FiveBitArray {
   const realDst = dst || ((new Uint8Array(message.length): any): FiveBitArray);
   for (let i = 0; i < message.length; i++) {
@@ -102,6 +124,17 @@ export function decode(message: string, dst?: FiveBitArray): FiveBitArray {
   return realDst;
 }
 
+/**
+ * Decodes a string and a human-readable prefix into an array of 5-bit groups.
+ * The prefix is expanded as specified by Bech32.
+ *
+ * @param {string} prefix
+ * @param {string} message
+ * @returns {Uint8Array}
+ *   Array with the result of decoding
+ *
+ * @api private
+ */
 export function decodeWithPrefix(prefix: string, message: string): FiveBitArray {
   const len = message.length + 2 * prefix.length + 1;
   const dst = ((new Uint8Array(len): any): FiveBitArray);
