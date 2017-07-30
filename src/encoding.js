@@ -69,7 +69,7 @@ export function expandPrefix(prefix: string, outBuffer: FiveBitArray): void {
 }
 
 /**
- * Verifies the checksum for a particular buffer
+ * Verifies the checksum for a particular buffer.
  */
 export function verifyChecksum(buffer: FiveBitArray): boolean {
   return polymod(buffer) === 1;
