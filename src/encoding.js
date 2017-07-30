@@ -1,6 +1,7 @@
 /* @flow */
 
 import assert from 'assert';
+import { createBitArray } from './bit-converter';
 import type { BitArray } from './bit-converter';
 
 type FiveBitArray = BitArray<5>;
@@ -69,7 +70,7 @@ export function expandPrefix(prefix: string, outBuffer: FiveBitArray): void {
 }
 
 /**
- * Verifies the checksum for a particular buffer
+ * Verifies the checksum for a particular buffer.
  */
 export function verifyChecksum(buffer: FiveBitArray): boolean {
   return polymod(buffer) === 1;
@@ -113,7 +114,7 @@ export function encode(buffer: FiveBitArray): string {
  * @api private
  */
 export function decode(message: string, dst?: FiveBitArray): FiveBitArray {
-  const realDst = dst || ((new Uint8Array(message.length): any): FiveBitArray);
+  const realDst = dst || createBitArray(message.length);
   for (let i = 0; i < message.length; i++) {
     const idx = CHAR_LOOKUP.get(message[i]);
     if (idx === undefined) {
@@ -137,7 +138,7 @@ export function decode(message: string, dst?: FiveBitArray): FiveBitArray {
  */
 export function decodeWithPrefix(prefix: string, message: string): FiveBitArray {
   const len = message.length + 2 * prefix.length + 1;
-  const dst = ((new Uint8Array(len): any): FiveBitArray);
+  const dst = createBitArray(len);
 
   expandPrefix(prefix, dst.subarray(0, 2 * prefix.length + 1));
   decode(message, dst.subarray(2 * prefix.length + 1));
