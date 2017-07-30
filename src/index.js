@@ -37,7 +37,7 @@ type FiveBitArray = BitArray<5>;
  */
 export function to5BitArray(src: Uint8Array, dst?: FiveBitArray): FiveBitArray {
   const len = Math.ceil(src.length * 8 / 5);
-  const realDst: FiveBitArray = dst || createBitArray(len);
+  const realDst = dst || createBitArray(len);
 
   return toBits(src, 5, realDst);
 }
@@ -81,7 +81,7 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
     }
   }
 
-  const buffer: FiveBitArray = createBitArray(len);
+  const buffer = createBitArray(len);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
   expandPrefix(prefix, buffer.subarray(0, 2 * prefix.length + 1));
