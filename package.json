@@ -14,16 +14,18 @@
   },
   "main": "lib/index.js",
   "files": [
-    "lib"
+    "lib",
+    "dist"
   ],
   "scripts": {
     "test": "mocha -r babel-register",
+    "test-browser": "karma start",
     "cover": "cross-env NODE_ENV=test nyc mocha",
     "report-cover": "nyc report",
     "report-to-coveralls": "nyc report --reporter=text-lcov | coveralls",
     "browser": "mkdirp dist && cross-env BABEL_ENV=browser browserify src/index.js -t [ babelify ] -o dist/bech32-buffer.min.js",
     "compile": "babel src/ -d lib/",
-    "prepare": "npm run compile",
+    "prepare": "npm run compile && npm run browser",
     "lint": "eslint --ignore-path .gitignore . && flow check"
   },
   "keywords": [
