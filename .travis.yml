@@ -27,7 +27,7 @@ before_script:
 script:
   - if [[ "$TESTSUITE" == "lint" ]]; then npm run lint; fi
   - if [[ "$TESTSUITE" == "test" ]]; then npm test; fi
-  - if [[ "$TESTSUITE" == "test-browser" ]]; then npm test-browser; fi
+  - if [[ "$TESTSUITE" == "test-browser" ]]; then npm run test-browser; fi
   - if [[ "$TESTSUITE" == "cover" ]]; then npm run cover; fi
 
 after_success:
