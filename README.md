@@ -90,6 +90,20 @@ var decoded = bech32.decode(data);
 // }
 ```
 
+## Use in Browsers
+
+Use `dist/bech32-buffer.min.js` from the package distribution
+or your favorite browserifier. In the first case,
+the library will be available as a `bech32` global variable:
+
+```html
+<script src="bech32-buffer.min.js"></script>
+<!-- later -->
+<script>
+bech32.encode('test', new Uint8Array(20));
+</script>
+```
+
 ## Acknowledgements
 
 [BIP 173][bip-173] is authored by Pieter Wuille and Greg Maxwell and is licensed
