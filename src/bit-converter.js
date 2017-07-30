@@ -15,6 +15,35 @@ declare class BitArray_<L: BitsNumber> extends Uint8Array {
 export type BitArray<L: BitsNumber> = BitArray_<L>;
 
 /**
+ * Performs unchecked conversion from `Uint8Array` to `BitArray`.
+ * This function is translated as the indentity operation by Babel; it's needed purely
+ * for Flow type checks.
+ *
+ * @param {Uint8Array} src
+ *   array to convert
+ * @returns {Uint8Array}
+ *   `src` interpreted as a `BitArray` with the specified bitness
+ *
+ * @api private
+ */
+function toBitArrayUnchecked<L: BitsNumber>(src: Uint8Array): BitArray<L> {
+  return ((src: any): BitArray<L>);
+}
+
+/**
+ * Creates a new array with specified bitness.
+ *
+ * @param {number} len
+ *   length of the created array
+ * @returns {Uint8Array}
+ *
+ * @api private
+ */
+export function createBitArray<L: BitsNumber>(len: number): BitArray<L> {
+  return toBitArrayUnchecked(new Uint8Array(len));
+}
+
+/**
  * Converts an array from one number of bits per element to another.
  *
  * @api private
@@ -78,7 +107,7 @@ export function toBits<L: BitsNumber>(
 
   // `BitArray<8>` is equivalent to `Uint8Array`; unfortunately, Flow
   // has problems expressing this, so the explicit coversion is performed here
-  convert(((src: any): BitArray<8>), 8, dst, bits, true);
+  convert(toBitArrayUnchecked(src), 8, dst, bits, true);
   return dst;
 }
 
@@ -91,6 +120,6 @@ export function fromBits<L: BitsNumber>(
     throw new RangeError('Invalid bits per element; 1 to 8 expected');
   }
 
-  convert(src, bits, ((dst: any): BitArray<8>), 8, false);
+  convert(src, bits, toBitArrayUnchecked(dst), 8, false);
   return dst;
 }

@@ -1,6 +1,6 @@
 /* @flow */
 
-import { toBits, fromBits } from './bit-converter';
+import { toBits, fromBits, createBitArray } from './bit-converter';
 import type { BitArray } from './bit-converter';
 import {
   expandPrefix,
@@ -37,7 +37,7 @@ type FiveBitArray = BitArray<5>;
  */
 export function to5BitArray(src: Uint8Array, dst?: FiveBitArray): FiveBitArray {
   const len = Math.ceil(src.length * 8 / 5);
-  const realDst = dst || ((new Uint8Array(len): any): FiveBitArray);
+  const realDst: FiveBitArray = dst || createBitArray(len);
 
   return toBits(src, 5, realDst);
 }
@@ -81,7 +81,7 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
     }
   }
 
-  const buffer = ((new Uint8Array(len): any): FiveBitArray);
+  const buffer: FiveBitArray = createBitArray(len);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
   expandPrefix(prefix, buffer.subarray(0, 2 * prefix.length + 1));
