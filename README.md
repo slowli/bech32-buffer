@@ -3,6 +3,7 @@
 [![Build status][travis-image]][travis-url]
 [![Code coverage][coveralls-image]][coveralls-url]
 [![Code style][code-style-image]][code-style-url]
+[![Demo][demo-image]][demo-url]
 
 [travis-image]: https://img.shields.io/travis/slowli/bech32-buffer.svg?style=flat-square
 [travis-url]: https://travis-ci.org/slowli/bech32-buffer
@@ -10,6 +11,8 @@
 [coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
 [code-style-image]: https://img.shields.io/badge/code%20style-Airbnb-brightgreen.svg?style=flat-square
 [code-style-url]: https://github.com/airbnb/javascript
+[demo-image]: https://img.shields.io/badge/demo-live-blue.svg?style=flat-square
+[demo-url]: https://slowli.github.io/bech32-buffer/
 
 **Bech32** is a new proposed Bitcoin address format specified in [BIP 173][bip-173].
 Among its advantages are: better adaptability to QR codes and in voice conversations,
@@ -104,6 +107,10 @@ bech32.encode('test', new Uint8Array(20));
 </script>
 ```
 
+Check out [the web demo](https://slowli.github.io/bech32-buffer/) to see how
+**bech32-buffer** works in browser. It is also available in the `examples`
+directory of the package.
+
 ## Acknowledgements
 
 [BIP 173][bip-173] is authored by Pieter Wuille and Greg Maxwell and is licensed
@@ -116,8 +123,6 @@ There are at least 2 existing implementations of Bech32 for JavaScript:
 
 Both implementations are Bitcoin-specific, and the reference implementation
 is also not in the Npm / yarn package manager.
-
-Check out [the web demo](examples/demo.html).
 
 ## License
 
