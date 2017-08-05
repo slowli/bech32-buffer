@@ -117,6 +117,8 @@ There are at least 2 existing implementations of Bech32 for JavaScript:
 Both implementations are Bitcoin-specific, and the reference implementation
 is also not in the Npm / yarn package manager.
 
+Check out [the web demo](examples/demo.html).
+
 ## License
 
 (c) 2017 Alex Ostrovski
