@@ -5,7 +5,7 @@
       "plugins": ["istanbul"]
     },
     "browser": {
-      "presets": ["es2015", "flow", "babili"]
+      "presets": ["flow", ["babili", { "mangle": false }], "es2015"]
     }
   }
 }
