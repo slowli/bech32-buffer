@@ -6,6 +6,11 @@ npm-debug.log
 /lib
 /dist
 
+# Minified version of the `qrcode-generator` package. As this package
+# is only used for the demo, it could make more sense to build in on the `prepare`
+# stage, rather than specify it as the non-dev dependency to the package.
+/examples/qrcode.min.js
+
 # Coverage reports
 /.nyc_output
 /coverage

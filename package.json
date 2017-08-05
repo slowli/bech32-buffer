@@ -24,6 +24,7 @@
     "report-cover": "nyc report",
     "report-to-coveralls": "nyc report --reporter=text-lcov | coveralls",
     "browser": "mkdirp dist && cross-env BABEL_ENV=browser browserify src/index.js -t [ babelify ] --standalone bech32 -o dist/bech32-buffer.min.js",
+    "minify-qr": "mkdirp dist && cross-env BABEL_ENV=browser browserify node_modules/qrcode-generator/qrcode.js -t [ babelify ] --standalone qrcode -o examples/qrcode.min.js",
     "compile": "babel src/ -d lib/",
     "prepare": "npm run compile && npm run browser",
     "lint": "eslint --ignore-path .gitignore . && flow check"
@@ -61,7 +62,8 @@
     "karma-phantomjs-launcher": "^1.0.4",
     "mkdirp": "^0.5.1",
     "mocha": "^3.4.2",
-    "nyc": "^11.0.3"
+    "nyc": "^11.0.3",
+    "qrcode-generator": "^1.3.1"
   },
   "nyc": {
     "require": [
