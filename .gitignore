@@ -11,6 +11,9 @@ npm-debug.log
 # stage, rather than specify it as the non-dev dependency to the package.
 /examples/qrcode.min.js
 
+# GitHub Pages
+/.gh-pages
+
 # Coverage reports
 /.nyc_output
 /coverage
