@@ -45,10 +45,18 @@ jobs:
       node_js: 8
       env: TESTSUITE=
       script: skip
+      before_deploy:
+        - bash ./gh-pages.sh
       deploy:
-        skip_cleanup: true
-        provider: npm
-        email: ostrovski.alex@gmail.com
-        api_key: $NPM_KEY
-        on:
-          tags: true
+        - provider: pages
+          skip_cleanup: true
+          local_dir: .gh-pages
+          github_token: $GITHUB_TOKEN
+          on:
+            branch: master
+        - provider: npm
+          skip_cleanup: true
+          email: ostrovski.alex@gmail.com
+          api_key: $NPM_KEY
+          on:
+            tags: true
