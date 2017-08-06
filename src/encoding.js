@@ -1,6 +1,5 @@
 /* @flow */
 
-import assert from 'assert';
 import { createBitArray } from './bit-converter';
 import type { BitArray } from './bit-converter';
 
@@ -44,13 +43,13 @@ const GEN = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
 function polymod(values: FiveBitArray): number {
   let chk = 1;
 
-  values.forEach((v) => {
+  for (let vi = 0; vi < values.length; vi++) {
     const b = (chk >> 25);
-    chk = ((chk & 0x1ffffff) << 5) ^ v;
+    chk = ((chk & 0x1ffffff) << 5) ^ values[vi];
     for (let i = 0; i < GEN.length; i++) {
       if (((b >> i) & 1) === 1) chk ^= GEN[i];
     }
-  });
+  }
 
   return chk;
 }
@@ -59,8 +58,6 @@ function polymod(values: FiveBitArray): number {
  * Expands a prefix onto the specified output buffer.
  */
 export function expandPrefix(prefix: string, outBuffer: FiveBitArray): void {
-  assert(outBuffer.length === 2 * prefix.length + 1);
-
   for (let i = 0; i < prefix.length; i++) {
     const code = prefix.charCodeAt(i);
     outBuffer[i] = code >> 5;

@@ -3,6 +3,7 @@
 [![Build status][travis-image]][travis-url]
 [![Code coverage][coveralls-image]][coveralls-url]
 [![Code style][code-style-image]][code-style-url]
+[![Demo][demo-image]][demo-url]
 
 [travis-image]: https://img.shields.io/travis/slowli/bech32-buffer.svg?style=flat-square
 [travis-url]: https://travis-ci.org/slowli/bech32-buffer
@@ -10,6 +11,8 @@
 [coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
 [code-style-image]: https://img.shields.io/badge/code%20style-Airbnb-brightgreen.svg?style=flat-square
 [code-style-url]: https://github.com/airbnb/javascript
+[demo-image]: https://img.shields.io/badge/demo-live-blue.svg?style=flat-square
+[demo-url]: https://slowli.github.io/bech32-buffer/
 
 **Bech32** is a new proposed Bitcoin address format specified in [BIP 173][bip-173].
 Among its advantages are: better adaptability to QR codes and in voice conversations,
@@ -89,6 +92,24 @@ var decoded = bech32.decode(data);
 //   data: Uint8Array([ 4, 8, 15, 16, 23, 42 ])
 // }
 ```
+
+## Use in Browsers
+
+Use `dist/bech32-buffer.min.js` from the package distribution
+or your favorite browserifier. In the first case,
+the library will be available as a `bech32` global variable:
+
+```html
+<script src="bech32-buffer.min.js"></script>
+<!-- later -->
+<script>
+bech32.encode('test', new Uint8Array(20));
+</script>
+```
+
+Check out [the web demo](https://slowli.github.io/bech32-buffer/) to see how
+**bech32-buffer** works in browser. It is also available in the `examples`
+directory of the package.
 
 ## Acknowledgements
 

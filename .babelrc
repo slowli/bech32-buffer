@@ -3,6 +3,9 @@
   "env": {
     "test": {
       "plugins": ["istanbul"]
+    },
+    "browser": {
+      "presets": ["flow", ["babili", { "mangle": false }], "es2015"]
     }
   }
 }
