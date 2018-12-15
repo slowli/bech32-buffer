@@ -7,11 +7,15 @@
   <meta name="description" content="Demo of bech32-buffer package capabilities">
 
   <title>Bech32 Demo</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/css/bootstrap.min.css" integrity="sha384-rwoIResjU2yc3z8GV/NPeZWAv56rSmLldC3R/AZzGRnGxQQKnKkoFVhFQhNUwEyJ" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
   <style>
   textarea {
     resize: none;
     height: 80px;
+  }
+
+  input[type=number] {
+    max-width: 5rem;
   }
 
   .content {
@@ -34,7 +38,7 @@
   }
 
   .align-height {
-    height: 140px;
+    min-height: 152px;
   }
 
   .qr-placeholder {
@@ -84,16 +88,49 @@
     <div class="row">
       <div class="col-md-6 mb-3 mb-md-0">
         <div class="card">
-          <h3 class="card-header">Data</h3>
-          <div class="card-block">
+          <div class="card-header">
+            <ul class="nav nav-tabs card-header-tabs">
+              <li class="nav-item">
+                <a class="nav-link active" id="encode-btc-tab" href="#encode-btc" data-toggle="tab" role="tab" aria-controls="profile" aria-selected="true">BTC Address</a>
+              </li>
+              <li class="nav-item">
+                <a class="nav-link" id="encode-data-tab" href="#encode-data" data-toggle="tab" role="tab" aria-controls="profile" aria-selected="false">Data</a>
+              </li>
+            </ul>
+          </div>
+          <div class="card-block p-2">
             <form>
-              <div class="align-height">
-                <label for="hrp">Tag</label>
-                <input type="text" id="hrp" class="form-control" placeholder="Tag"/>
-                <div class="form-text text-muted small">A short tag describing what a Bech32-encoded string is used for.</div>
+              <div class="align-height tab-content">
+                <div class="tab-pane" id="encode-data" role="tabpanel" aria-labelledby="encode-data-tab">
+                  <label for="hrp">Tag</label>
+                  <input type="text" id="hrp" class="form-control" placeholder="Tag"/>
+                  <div class="form-text text-muted small">A short tag describing what a Bech32-encoded string is used for.</div>
+                </div>
+                <div class="tab-pane active" id="encode-btc" role="tabpanel" aria-labelledby="encode-btc-tab">
+                  <div class="form-group form-row">
+                    <label class="col-3 col-form-label">Network</label>
+                    <div class="col-9">
+                      <div class="btn-group btn-group-toggle" data-toggle="buttons">
+                        <label class="btn btn-secondary active">
+                          <input type="radio" name="btc-network-options" id="btc-mainnet" autocomplete="off" checked> Mainnet
+                        </label>
+                        <label class="btn btn-secondary">
+                          <input type="radio" name="btc-network-options" id="btc-testnet" autocomplete="off"> Testnet
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="form-group form-row">
+                    <label for="script-version" class="col-3 col-form-label">Script ver.</label>
+                    <div class="col-9">
+                      <input type="number" id="script-version" min="0" max="16" size="6" value="0">
+                    </div>
+                    <div class="col-12 text-muted small">Note that version 0 scripts should have length 20 or 32 bytes.</div>
+                  </div>
+                </div>
               </div>
               <label for="data">Data</label>
-              <textarea type="text" id="data" class="form-control" placeholder="Hex data"></textarea>
+              <textarea id="data" class="form-control" placeholder="Hex data"></textarea>
               <div class="form-text text-muted small">Binary data (in hex) to be encoded into Bech32.</div>
 
               <div class="mt-4">
@@ -107,12 +144,12 @@
 
       <div class="col-md-6">
         <div class="card">
-          <h3 class="card-header">Bech32</h3>
-          <div id="qrcode" class="card-img-top text-center py-2 align-height" title="QR code with the last successful encoded message"><div class="qr-placeholder"></div></div>
-          <div class="card-block">
+          <h4 class="card-header">Bech32</h4>
+          <div id="qrcode" class="card-img-top text-center py-2 align-height" title="QR code with the latest encoded or decoded message"><div class="qr-placeholder"></div></div>
+          <div class="card-block p-2">
             <form>
               <label for="encoded">Encoded data</label>
-              <textarea type="text" id="encoded" class="form-control" placeholder="Bech32 string"></textarea>
+              <textarea id="encoded" class="form-control" placeholder="Bech32 string"></textarea>
               <div class="form-text text-muted small">Encoded Bech32 string.</div>
 
               <button type="button" id="decode" class="btn btn-primary mt-4" data-container="body" data-toggle="popover" data-placement="top" data-content="">Decode</button>
@@ -123,7 +160,7 @@
     </div>
 
     <footer class="page-footer small text-muted">
-      <span class="copyright">© 2017 Alex Ostrovski</span>
+      <span class="copyright">© 2018 Alex Ostrovski</span>
       <div class="float-none float-sm-right">
         <a href="https://github.com/slowli/bech32-buffer">GitHub</a>&nbsp;•
         <a href="https://npmjs.com/package/bech32-buffer">Npm</a>&nbsp;•
@@ -132,9 +169,9 @@
     </footer>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js" integrity="sha384-ZMP7rVo3mIykV+2+9J3UJ46jBk0WLaUAdn689aCwoqbBJiSnjAK/l8WvCWPIPm49" crossorigin="anonymous"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js" integrity="sha384-ChfqqxuZUCnJSK3+MXmPNIyE6ZbWh2IMqE241rYiqJxyMiZ6OW/JmZQ5stwEULTy" crossorigin="anonymous"></script>
 
   <script src="qrcode.min.js"></script>
   <script src="../dist/bech32-buffer.min.js"></script>
@@ -176,10 +213,10 @@
     var hrp = $('#hrp');
     var data = $('#data');
     var encoded = $('#encoded');
-    var result = $('#result');
     var encodeBtn = $('#encode');
     var decodeBtn = $('#decode');
     var randomBtn = $('#random');
+    var scriptVersion = $('#script-version');
 
     var timeouts = {};
 
@@ -198,11 +235,20 @@
 
     encodeBtn.click(function() {
       var enc;
+      var btc = $('#encode-btc').hasClass('active');
 
       try {
         var buffer = fromHexString(data.val());
         if (!buffer) throw new TypeError('Invalid hex encoding of data');
-        enc = bech32.encode(hrp.val(), buffer);
+
+        if (btc) {
+          var prefix = $('#btc-mainnet').prop('checked') ? 'bc' : 'tb';
+          var version = parseInt(scriptVersion.val());
+          var btcAddress = new bech32.BitcoinAddress(prefix, version, buffer);
+          enc = btcAddress.encode();
+        } else {
+          enc = bech32.encode(hrp.val(), buffer);
+        }
         encoded.val(enc);
       } catch (e) {
         report('danger', encodeBtn, 'Error: ' + e.message);
@@ -218,10 +264,21 @@
 
     decodeBtn.click(function() {
       var dec;
+      var btc = $('#encode-btc').hasClass('active');
 
       try {
-        dec = bech32.decode(encoded.val());
-        hrp.val(dec.prefix);
+        if (btc) {
+          dec = bech32.BitcoinAddress.decode(encoded.val());
+          scriptVersion.val(dec.scriptVersion);
+
+          var selectedNetwork = (dec.prefix === 'bc') ? $('#btc-mainnet') : $('#btc-testnet');
+          $('input[name=btc-network-options]').parent().removeClass('active');
+          selectedNetwork.prop('checked', true);
+          selectedNetwork.parent().addClass('active');
+        } else {
+          dec = bech32.decode(encoded.val());
+          hrp.val(dec.prefix);
+        }
         data.val(toHexString(dec.data));
       } catch (e) {
         report('danger', decodeBtn, 'Error: ' + e.message);
@@ -229,6 +286,10 @@
       }
 
       report('success', decodeBtn, 'Data decoded (' + dec.data.length + ' bytes)');
+      var qr = qrcode(0, 'M');
+      qr.addData(encoded.val().toUpperCase(), 'Alphanumeric');
+      qr.make();
+      $('#qrcode').html(qr.createSvgTag(4, 0));
     });
 
     $('#encode,#decode').popover({
@@ -238,14 +299,23 @@
 
     randomBtn.click(function(e) {
       e.preventDefault();
-      // Not secure! Don't use in production
+      var btc = $('#encode-btc').hasClass('active');
 
-      var length = 8 + Math.floor(Math.random() * 32);
+      // Not secure! Don't use in production.
+      var length = (btc && parseInt(scriptVersion.val()) === 0)
+        ? (Math.random() > 0.5 ? 32 : 20)
+        : 8 + Math.floor(Math.random() * 32);
       var buffer = new Uint8Array(length);
       for (var i = 0; i < length; i++) {
         buffer[i] = Math.floor(Math.random() * 256);
       }
       data.val(toHexString(buffer));
+    });
+
+    scriptVersion.change(function() {
+      var version = parseInt(scriptVersion.val());
+      if (version < 0) scriptVersion.val(0);
+      if (version > 16) scriptVersion.val(16);
     });
   })();
   </script>
