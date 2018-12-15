@@ -1,18 +1,20 @@
 dist: trusty
-sudo: false
-cache:
-  directories:
-    - node_modules
+addons:
+  chrome: stable
 branches:
   only:
     - master
     # tags
     - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
 
+cache:
+  directories:
+    - node_modules
+
 language: node_js
 node_js:
-  - 4
   - 6
+  - 8
 env:
   - TESTSUITE=test
 
@@ -35,14 +37,14 @@ after_success:
 
 jobs:
   include:
-    - node_js: 8
+    - node_js: 10
       env: TESTSUITE=cover
-    - node_js: 8
+    - node_js: 10
       env: TESTSUITE=lint
-    - node_js: 8
+    - node_js: 10
       env: TESTSUITE=test-browser
     - stage: deploy
-      node_js: 8
+      node_js: 10
       env: TESTSUITE=
       script: skip
       before_deploy:

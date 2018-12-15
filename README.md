@@ -51,7 +51,7 @@ String containing:
 ```javascript
 var bech32 = require('bech32-buffer');
 var data = new Uint8Array(20);
-var encoded = bech32.encode('test', data);
+bech32.encode('test', data);
 // 'test1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqql6aptf'
 ```
 
@@ -86,11 +86,42 @@ with a descriptive message.
 ```javascript
 var bech32 = require('bech32-buffer');
 var data = 'lost1qsyq7yqh9gk0szs5';
-var decoded = bech32.decode(data);
+bech32.decode(data);
 // {
 //   prefix: 'lost',
 //   data: Uint8Array([ 4, 8, 15, 16, 23, 42 ])
 // }
+```
+
+### Bitcoin addresses
+
+```typescript
+class BitcoinAddress {
+  prefix: 'bc' | 'tb';
+  scriptVersion: number;
+  data: Uint8Array;
+
+  static decode(message: string): BitcoinAddress;
+  constructor(prefix: 'bc' | 'tb', scriptVersion: number, data: Uint8Array);
+  encode(): string;
+  type(): void | 'p2wsh' | 'p2wpkh';
+}
+```
+
+Provides basic functionality to work with Bech32 encoding of Bitcoin addresses.
+Addresses can be `decode`d from strings and `encode`d into strings.
+It is also possible to check the `type` of an address. P2WSH and P2WPKH address
+types are defined per [BIP 141]. Encoding constraints are defined per [BIP 173].
+
+#### Example
+
+```javascript
+var bech32 = require('bech32-buffer');
+var address = bech32.BitcoinAddress.decode('BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4');
+// address.prefix === 'bc'
+// address.scriptVersion === 0
+// address.data.length === 20
+// address.type() === 'p2wpkh'
 ```
 
 ## Use in Browsers
@@ -134,3 +165,5 @@ is also not in the Npm / yarn package manager.
 [ref]: https://github.com/sipa/bech32/tree/master/ref/javascript
 [bech32]: https://github.com/bitcoinjs/bech32
 [bech32-pkg]: https://www.npmjs.com/package/bech32
+[BIP 141]: https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki
+[BIP 173]: https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki

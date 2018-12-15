@@ -22,7 +22,7 @@ module.exports = (config) => {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    browsers: ['Firefox', 'PhantomJS'],
+    browsers: ['Firefox', 'ChromeHeadless'],
     browserNoActivityTimeout: 30000,
     singleRun: true,
     concurrency: Infinity,

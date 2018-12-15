@@ -26,7 +26,7 @@ type FiveBitArray = BitArray<5>;
  *
  * @param {Uint8Array} src
  *   Input to convert
- * @param {?Uint8Array} outBuffer
+ * @param {?Uint8Array} dst
  *   Optional output buffer. If specified, the 5-bit sequence will be written there;
  *   if not specified, the output buffer will be created from scratch. The length
  *   of `outBuffer` is not checked.
@@ -198,4 +198,95 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
 export function decode(message: string): { prefix: string, data: Uint8Array } {
   const { prefix, data: bitArray } = decodeTo5BitArray(message);
   return { prefix, data: from5BitArray(bitArray) };
+}
+
+/**
+ * Bitcoin address.
+ */
+export class BitcoinAddress {
+  /**
+   * Human-readable prefix. Equal to `'bc'` (for mainnet addresses)
+   * or `'tb'` (for testnet addresses).
+   */
+  prefix: 'bc' | 'tb';
+  /**
+   * Script version. An integer between 0 and 16 (inclusive).
+   */
+  scriptVersion: number;
+  /**
+   * Script data. A byte string with length 2 to 40 (inclusive).
+   */
+  data: Uint8Array;
+
+  /**
+   * Decodes a Bitcoin address from a Bech32 string.
+   * This method does not check whether the address is well-formed;
+   * use `type()` method on returned address to find that out.
+   *
+   * @param {string} message
+   * @returns {BitcoinAddress}
+   */
+  static decode(message: string): BitcoinAddress {
+    const { prefix, data } = decodeTo5BitArray(message);
+    // Extra check to satisfy Flow.
+    if (prefix !== 'bc' && prefix !== 'tb') {
+      throw new Error('Invalid human-readable prefix, "bc" or "tb" expected');
+    }
+    return new this(prefix, data[0], from5BitArray(data.subarray(1)));
+  }
+
+  constructor(prefix: 'bc' | 'tb', scriptVersion: number, data: Uint8Array) {
+    if (prefix !== 'bc' && prefix !== 'tb') {
+      throw new Error('Invalid human-readable prefix, "bc" or "tb" expected');
+    }
+    if ((scriptVersion < 0) || (scriptVersion > 16)) {
+      throw new RangeError('Invalid scriptVersion, value in range [0, 16] expected');
+    }
+    if (data.length < 2 || data.length > 40) {
+      throw new RangeError('Invalid script length: expected 2 to 40 bytes');
+    }
+    if ((scriptVersion === 0) && (data.length !== 20 && data.length !== 32)) {
+      throw new Error('Invalid v0 script length: expected 20 or 32 bytes');
+    }
+
+    this.prefix = prefix;
+    this.scriptVersion = scriptVersion;
+    this.data = data;
+  }
+
+  /**
+   * Guesses the address type based on its internal structure.
+   *
+   * @returns {void | 'p2wpkh' | 'p2wsh'}
+   */
+  type(): void | 'p2wpkh' | 'p2wsh' {
+    if (this.scriptVersion !== 0) {
+      return undefined;
+    }
+
+    switch (this.data.length) {
+      case 20: return 'p2wpkh';
+      case 32: return 'p2wsh';
+
+      // should be unreachable, but it's JS, so you never know
+      default: return undefined;
+    }
+  }
+
+  /**
+   * Encodes this address in Bech32 format.
+   *
+   * @returns {string}
+   *   Bech32-encoded address
+   */
+  encode(): string {
+    // Bitcoin addresses use Bech32 in a peculiar way - script version is
+    // not a part of the serialized binary data, but is rather prepended as 5-bit value
+    // before the rest of the script. This necessitates some plumbing here.
+    const len = Math.ceil(this.data.length * 8 / 5);
+    const converted: FiveBitArray = createBitArray(len + 1);
+    converted[0] = this.scriptVersion;
+    to5BitArray(this.data, converted.subarray(1));
+    return encode5BitArray(this.prefix, converted);
+  }
 }
