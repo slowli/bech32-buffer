@@ -1,12 +1,15 @@
 dist: trusty
-cache:
-  directories:
-    - node_modules
+addons:
+  chrome: stable
 branches:
   only:
     - master
     # tags
     - /^v\d+\.\d+(\.\d+)?(-\S*)?$/
+
+cache:
+  directories:
+    - node_modules
 
 language: node_js
 node_js:
