@@ -22,7 +22,7 @@ module.exports = (config) => {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: false,
-    browsers: ['Firefox', 'ChromeHeadless'],
+    browsers: ['FirefoxHeadless', 'ChromeHeadless'],
     browserNoActivityTimeout: 30000,
     singleRun: true,
     concurrency: Infinity,
