@@ -66,15 +66,15 @@ export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
  */
 export function encode5BitArray(prefix: string, data: FiveBitArray): string {
   // 1. Allocate buffer for all operations
-  const len = 2 * prefix.length + 1 +  // expanded prefix
-    data.length +                      // five-bit data encoding
-    CHECKSUM_LENGTH;                   // checksum
+  const len = 2 * prefix.length + 1 // expanded prefix
+    + data.length // five-bit data encoding
+    + CHECKSUM_LENGTH; // checksum
 
   if (len - prefix.length > MAX_ENC_LENGTH) {
     throw new Error(`Message to be produced is too long (max ${MAX_ENC_LENGTH} supported)`);
   }
 
-  for (let i = 0; i < prefix.length; i++) {
+  for (let i = 0; i < prefix.length; i += 1) {
     const ord = prefix.charCodeAt(i);
     if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
       throw new TypeError(`Invalid char in prefix: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
@@ -139,7 +139,7 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
   // 2. Mixed case
   let hasLowerCase = false;
   let hasUpperCase = false;
-  for (let i = 0; i < message.length; i++) {
+  for (let i = 0; i < message.length; i += 1) {
     const ord = message.charCodeAt(i);
 
     // 3. Allowed chars in the encoding
@@ -209,10 +209,12 @@ export class BitcoinAddress {
    * or `'tb'` (for testnet addresses).
    */
   prefix: 'bc' | 'tb';
+
   /**
    * Script version. An integer between 0 and 16 (inclusive).
    */
   scriptVersion: number;
+
   /**
    * Script data. A byte string with length 2 to 40 (inclusive).
    */

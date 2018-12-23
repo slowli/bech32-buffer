@@ -4,7 +4,7 @@ import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
 import { toBits, fromBits } from '../src/bit-converter';
 
-const expect = chai.use(chaiBytes).expect;
+const { expect } = chai.use(chaiBytes);
 
 describe('bit-converter', () => {
   describe('toBits', () => {

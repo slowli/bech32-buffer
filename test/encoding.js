@@ -12,7 +12,7 @@ import {
 } from '../src/encoding';
 import { toBits } from '../src/bit-converter';
 
-const expect = chai.use(chaiBytes).expect;
+const { expect } = chai.use(chaiBytes);
 
 describe('Bech32 low-level encoding', () => {
   describe('CHECKSUM_LENGTH', () => {
@@ -39,10 +39,10 @@ describe('Bech32 low-level encoding', () => {
   describe('createChecksum', () => {
     it('should create a checksum for a short test vector', () => {
       const buffer = new Uint8Array([
-        3, 3, 0, 2, 3,      // the encoded `bc` prefix
-        16,                 // script version
-        0, 0, 0, 0,         // script data placeholder
-        0, 0, 0, 0, 0, 0,   // placeholder for the checksum
+        3, 3, 0, 2, 3, // the encoded `bc` prefix
+        16, // script version
+        0, 0, 0, 0, // script data placeholder
+        0, 0, 0, 0, 0, 0, // placeholder for the checksum
       ]);
 
       // Fill the script data, `ceil(16 / 5) = 4` bytes
@@ -56,10 +56,10 @@ describe('Bech32 low-level encoding', () => {
   describe('verifyChecksum', () => {
     it('should create a checksum for a short test vector', () => {
       const buffer = new Uint8Array([
-        3, 3, 0, 2, 3,          // the encoded `bc` prefix
-        16,                     // script version
-        0, 0, 0, 0,             // script data placeholder
-        29, 17, 18, 6, 17, 16,  // checksum
+        3, 3, 0, 2, 3, // the encoded `bc` prefix
+        16, // script version
+        0, 0, 0, 0, // script data placeholder
+        29, 17, 18, 6, 17, 16, // checksum
       ]);
 
       // Fill the script data, `ceil(16 / 5) = 4` bytes

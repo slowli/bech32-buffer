@@ -18,19 +18,19 @@ interface Lookup<K, V> {
 // Reverse lookup for characters
 const CHAR_LOOKUP = (() => {
   const lookup: Lookup<string, number> = typeof Map !== 'undefined' ? new Map() : {
-    _map: {},
+    map: {},
 
     get(i: string): number {
-      return this._map[i];
+      return this.map[i];
     },
 
     set(i: string, v: number) {
-      this._map[i] = v;
+      this.map[i] = v;
       return this;
     },
   };
 
-  for (let i = 0; i < CHARSET.length; i++) {
+  for (let i = 0; i < CHARSET.length; i += 1) {
     lookup.set(CHARSET[i], i);
   }
 
@@ -41,24 +41,21 @@ const CHAR_LOOKUP = (() => {
 const GEN = [0x3b6a57b2, 0x26508e6d, 0x1ea119fa, 0x3d4233dd, 0x2a1462b3];
 
 function polymod(values: FiveBitArray): number {
-  let chk = 1;
-
-  for (let vi = 0; vi < values.length; vi++) {
-    const b = (chk >> 25);
-    chk = ((chk & 0x1ffffff) << 5) ^ values[vi];
-    for (let i = 0; i < GEN.length; i++) {
-      if (((b >> i) & 1) === 1) chk ^= GEN[i];
-    }
-  }
-
-  return chk;
+  return values.reduce((checksum, value) => {
+    const bits = checksum >> 25;
+    const newChecksum = ((checksum & 0x1ffffff) << 5) ^ value;
+    return GEN.reduce(
+      (chk, gen, i) => (((bits >> i) & 1) === 0 ? chk : (chk ^ gen)),
+      newChecksum,
+    );
+  }, /* initial checksum */ 1);
 }
 
 /**
  * Expands a prefix onto the specified output buffer.
  */
 export function expandPrefix(prefix: string, outBuffer: FiveBitArray): void {
-  for (let i = 0; i < prefix.length; i++) {
+  for (let i = 0; i < prefix.length; i += 1) {
     const code = prefix.charCodeAt(i);
     outBuffer[i] = code >> 5;
     outBuffer[i + prefix.length + 1] = code & 31;
@@ -79,8 +76,9 @@ export function verifyChecksum(buffer: FiveBitArray): boolean {
  */
 export function createChecksum(buffer: FiveBitArray): void {
   const mod = polymod(buffer) ^ 1;
-  for (let i = 0; i < CHECKSUM_LENGTH; i++) {
-    buffer[buffer.length - CHECKSUM_LENGTH + i] = (mod >> (5 * (5 - i))) & 31;
+  for (let i = 0; i < CHECKSUM_LENGTH; i += 1) {
+    const shift = 5 * (5 - i);
+    buffer[buffer.length - CHECKSUM_LENGTH + i] = (mod >> shift) & 31;
   }
 }
 
@@ -112,7 +110,7 @@ export function encode(buffer: FiveBitArray): string {
  */
 export function decode(message: string, dst?: FiveBitArray): FiveBitArray {
   const realDst = dst || createBitArray(message.length);
-  for (let i = 0; i < message.length; i++) {
+  for (let i = 0; i < message.length; i += 1) {
     const idx = CHAR_LOOKUP.get(message[i]);
     if (idx === undefined) {
       throw new Error(`Invalid char in message: ${message[i]}`);
