@@ -75,6 +75,10 @@
     "require": [
       "babel-register"
     ],
+    "exclude": [
+      "lib",
+      "test"
+    ],
     "sourceMap": false,
     "instrument": false
   }
