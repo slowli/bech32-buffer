@@ -31,6 +31,8 @@ script:
 after_success:
   - npm run report-to-coveralls
 
+before_deploy:
+  - bash ./gh-pages.sh
 deploy:
   - provider: pages
     skip_cleanup: true
