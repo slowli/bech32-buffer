@@ -8,6 +8,7 @@ npm-debug.log
 # Transpiled files
 /lib
 /dist
+/test/types.js
 
 # Minified version of the `qrcode-generator` package. As this package
 # is only used for the demo, it could make more sense to build in on the `prepare`

@@ -16,8 +16,10 @@
   "files": [
     "lib",
     "dist",
-    "examples"
+    "examples",
+    "index.d.ts"
   ],
+  "types": "index.d.ts",
   "scripts": {
     "test": "mocha -r babel-register",
     "test-browser": "karma start",
@@ -28,7 +30,8 @@
     "minify-qr": "mkdirp dist && cross-env BABEL_ENV=browser browserify node_modules/qrcode-generator/qrcode.js -t [ babelify ] --standalone qrcode -o examples/qrcode.min.js",
     "compile": "babel src/ -d lib/",
     "prepare": "npm run compile && npm run browser",
-    "lint": "eslint --ignore-path .gitignore . && flow check"
+    "lint": "eslint --ignore-path .gitignore . && flow check",
+    "test-ts": "tsc -p test && node test/types.js"
   },
   "keywords": [
     "bech32",
@@ -38,6 +41,7 @@
   "author": "Alex Ostrovski <ostrovski.alex@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@types/chai": "^4.1.7",
     "babel-cli": "^6.26.0",
     "babel-eslint": "^7.2.3",
     "babel-plugin-istanbul": "^4.1.6",
@@ -48,7 +52,7 @@
     "babelify": "^7.3.0",
     "browserify": "^14.5.0",
     "chai": "^4.2.0",
-    "chai-bytes": "^0.1.1",
+    "chai-bytes": "^0.1.2",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
     "eslint": "^3.19.0",
@@ -64,11 +68,16 @@
     "mkdirp": "^0.5.1",
     "mocha": "^5.2.0",
     "nyc": "^13.1.0",
-    "qrcode-generator": "^1.4.1"
+    "qrcode-generator": "^1.4.1",
+    "typescript": "^3.2.2"
   },
   "nyc": {
     "require": [
       "babel-register"
+    ],
+    "exclude": [
+      "lib",
+      "test"
     ],
     "sourceMap": false,
     "instrument": false

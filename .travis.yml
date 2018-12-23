@@ -1,5 +1,6 @@
 dist: trusty
 addons:
+  firefox: latest
   chrome: stable
 branches:
   only:
@@ -15,50 +16,33 @@ language: node_js
 node_js:
   - 6
   - 8
-env:
-  - TESTSUITE=test
+  - 10
 
-before_script:
-  - npm install -g mocha-cli
-  - |
-    if [[ "$TESTSUITE" == "test-browser" ]]; then
-      export DISPLAY=:99.0
-      sh -e /etc/init.d/xvfb start
-      sleep 3
-    fi
 script:
-  - if [[ "$TESTSUITE" == "lint" ]]; then npm run lint; fi
-  - if [[ "$TESTSUITE" == "test" ]]; then npm test; fi
-  - if [[ "$TESTSUITE" == "test-browser" ]]; then npm run test-browser; fi
-  - if [[ "$TESTSUITE" == "cover" ]]; then npm run cover; fi
+  - npm run lint
+  # This step is necessary for Node 6, which due to an old `npm` version doesn't run
+  # `prepare` automatically.
+  - npm run prepare
+  - npm test
+  - npm run test-ts
+  - npm run test-browser
+  - npm run cover
 
 after_success:
-  - if [[ "$TESTSUITE" == "cover" ]]; then npm run report-to-coveralls; fi
+  - npm run report-to-coveralls
 
-jobs:
-  include:
-    - node_js: 10
-      env: TESTSUITE=cover
-    - node_js: 10
-      env: TESTSUITE=lint
-    - node_js: 10
-      env: TESTSUITE=test-browser
-    - stage: deploy
-      node_js: 10
-      env: TESTSUITE=
-      script: skip
-      before_deploy:
-        - bash ./gh-pages.sh
-      deploy:
-        - provider: pages
-          skip_cleanup: true
-          local_dir: .gh-pages
-          github_token: $GITHUB_TOKEN
-          on:
-            branch: master
-        - provider: npm
-          skip_cleanup: true
-          email: ostrovski.alex@gmail.com
-          api_key: $NPM_KEY
-          on:
-            tags: true
+deploy:
+  - provider: pages
+    skip_cleanup: true
+    local_dir: .gh-pages
+    github_token: $GITHUB_TOKEN
+    on:
+      branch: master
+      node: 10
+  - provider: npm
+    skip_cleanup: true
+    email: ostrovski.alex@gmail.com
+    api_key: $NPM_KEY
+    on:
+      tags: true
+      node: 10
