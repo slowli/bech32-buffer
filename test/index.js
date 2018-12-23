@@ -32,7 +32,7 @@ describe('bech32', () => {
         // Extract version from the script
         const prefix = address.substring(0, 2).toLowerCase();
         const scriptData = Buffer.from(script, 'hex');
-        const version = scriptData[0] & 31;
+        const version = scriptData[0] % 32;
 
         // First 2 bytes of the script are version and the script length,
         // respectively, so they are skipped with `.subarray(2)`.
@@ -101,7 +101,7 @@ describe('bech32', () => {
   describe('BitcoinAddress', () => {
     it('should allow creating custom addresses', () => {
       const data = new Uint8Array(32);
-      for (let i = 0; i < data.length; i++) {
+      for (let i = 0; i < data.length; i += 1) {
         data[i] = i;
       }
       const address = new BitcoinAddress('bc', 0, data);
@@ -143,7 +143,7 @@ describe('bech32', () => {
         it(`should decode address "${address}" from test vectors`, () => {
           const decoded = BitcoinAddress.decode(address);
           const scriptData = Buffer.from(script, 'hex');
-          const version = scriptData[0] & 31;
+          const version = scriptData[0] % 32;
 
           expect(decoded.prefix).to.satisfy(prefix => prefix === 'tb' || prefix === 'bc');
           expect(decoded.scriptVersion).to.equal(version);

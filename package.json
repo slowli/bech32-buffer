@@ -21,7 +21,7 @@
   ],
   "types": "index.d.ts",
   "scripts": {
-    "test": "mocha -r babel-register",
+    "test": "mocha -r @babel/register",
     "test-browser": "karma start",
     "cover": "cross-env NODE_ENV=test nyc mocha",
     "report-cover": "nyc report",
@@ -31,7 +31,7 @@
     "compile": "babel src/ -d lib/",
     "prepare": "npm run compile && npm run browser",
     "lint": "eslint --ignore-path .gitignore . && flow check",
-    "test-ts": "tsc -p test && node test/types.js"
+    "test-ts": "npm run compile && tsc -p test && node test/types.js"
   },
   "keywords": [
     "bech32",
@@ -41,24 +41,25 @@
   "author": "Alex Ostrovski <ostrovski.alex@gmail.com>",
   "license": "Apache-2.0",
   "devDependencies": {
+    "@babel/cli": "^7.2.3",
+    "@babel/core": "^7.2.2",
+    "@babel/preset-env": "^7.2.3",
+    "@babel/preset-flow": "^7.0.0",
+    "@babel/register": "^7.0.0",
     "@types/chai": "^4.1.7",
-    "babel-cli": "^6.26.0",
-    "babel-eslint": "^7.2.3",
-    "babel-plugin-istanbul": "^4.1.6",
-    "babel-preset-babili": "^0.1.4",
-    "babel-preset-es2015": "^6.24.1",
-    "babel-preset-flow": "^6.23.0",
-    "babel-register": "^6.26.0",
-    "babelify": "^7.3.0",
-    "browserify": "^14.5.0",
+    "babel-eslint": "^10.0.1",
+    "babel-plugin-istanbul": "^5.1.0",
+    "babel-preset-minify": "^0.5.0",
+    "babelify": "^10.0.0",
+    "browserify": "^16.2.3",
     "chai": "^4.2.0",
     "chai-bytes": "^0.1.2",
     "coveralls": "^3.0.2",
     "cross-env": "^5.2.0",
-    "eslint": "^3.19.0",
-    "eslint-config-airbnb-base": "^11.3.2",
+    "eslint": "^5.11.0",
+    "eslint-config-airbnb-base": "^13.1.0",
     "eslint-plugin-import": "^2.14.0",
-    "flow-bin": "^0.50.0",
+    "flow-bin": "^0.89.0",
     "karma": "^3.1.3",
     "karma-browserify": "^6.0.0",
     "karma-chrome-launcher": "^2.2.0",
@@ -73,7 +74,7 @@
   },
   "nyc": {
     "require": [
-      "babel-register"
+      "@babel/register"
     ],
     "exclude": [
       "lib",

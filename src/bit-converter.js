@@ -55,37 +55,37 @@ function convert<IL: BitsNumber, OL: BitsNumber>(
   dstBits: OL,
   pad: boolean,
 ): void {
-  const max = (1 << dstBits) - 1;
+  const mask = (1 << dstBits) - 1;
 
-  const rem = Array.prototype.reduce.call(src, ({ acc, bits, pos }, b) => {
-    // Pull next bits from the input buffer into accumulator
-    const acc_ = (acc << srcBits) + b;
-    let bits_ = bits + srcBits;
-    let pos_ = pos;
+  let acc = 0;
+  let bits = 0;
+  let pos = 0;
+  src.forEach((b) => {
+    // Pull next bits from the input buffer into accumulator.
+    acc = (acc << srcBits) + b;
+    bits += srcBits;
 
-    // Push into the output buffer while there are enough bits in the accumulator
-    while (bits_ >= dstBits) {
-      bits_ -= dstBits;
-      dst[pos_] = (acc_ >> bits_) & max;
-      pos_ += 1;
+    // Push into the output buffer while there are enough bits in the accumulator.
+    while (bits >= dstBits) {
+      bits -= dstBits;
+      dst[pos] = (acc >> bits) & mask;
+      pos += 1;
     }
-
-    return { acc: acc_, bits: bits_, pos: pos_ };
-  }, { acc: 0, bits: 0, pos: 0 });
+  });
 
   if (pad) {
-    if (rem.bits > 0) {
+    if (bits > 0) {
       // `dstBits - rem.bits` is the number of trailing zero bits needed to be appended
-      // to accumulator bits to get the trailing bit group
-      dst[rem.pos] = (rem.acc << (dstBits - rem.bits)) & max;
+      // to accumulator bits to get the trailing bit group.
+      dst[pos] = (acc << (dstBits - bits)) & mask;
     }
   } else {
     // Truncate the remaining padding, but make sure that it is zeroed and not
-    // overly long first
-    if (rem.bits >= srcBits) {
-      throw new Error(`Excessive padding: ${rem.bits} (max ${srcBits - 1} allowed)`);
+    // overly long first.
+    if (bits >= srcBits) {
+      throw new Error(`Excessive padding: ${bits} (max ${srcBits - 1} allowed)`);
     }
-    if (rem.acc % (1 << rem.bits) !== 0) {
+    if (acc % (1 << bits) !== 0) {
       throw new Error('Non-zero padding');
     }
   }
@@ -106,7 +106,7 @@ export function toBits<L: BitsNumber>(
   }
 
   // `BitArray<8>` is equivalent to `Uint8Array`; unfortunately, Flow
-  // has problems expressing this, so the explicit coversion is performed here
+  // has problems expressing this, so the explicit conversion is performed here.
   convert(toBitArrayUnchecked(src), 8, dst, bits, true);
   return dst;
 }
