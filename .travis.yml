@@ -20,6 +20,9 @@ node_js:
 
 script:
   - npm run lint
+  # This step is necessary for Node 6, which due to an old `npm` version doesn't run
+  # `prepare` automatically.
+  - npm run prepare
   - npm test
   - npm run test-ts
   - npm run test-browser
