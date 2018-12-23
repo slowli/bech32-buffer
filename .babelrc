@@ -1,11 +1,12 @@
 {
-  "presets": ["es2015", "flow"],
+  "presets": ["@babel/preset-env", "@babel/preset-flow"],
   "env": {
     "test": {
       "plugins": ["istanbul"]
     },
     "browser": {
-      "presets": [["babili", { "mangle": false }], "es2015", "flow"]
+      "presets": ["minify", "@babel/preset-env", "@babel/preset-flow"],
+      "comments": false
     }
   }
 }
