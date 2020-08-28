@@ -1,4 +1,4 @@
-dist: trusty
+dist: xenial
 addons:
   firefox: latest
   chrome: stable
@@ -14,9 +14,10 @@ cache:
 
 language: node_js
 node_js:
-  - 6
   - 8
   - 10
+  - 12
+  - 14
 
 script:
   - npm run lint
@@ -40,11 +41,11 @@ deploy:
     github_token: $GITHUB_TOKEN
     on:
       branch: master
-      node: 10
+      node: 12
   - provider: npm
     skip_cleanup: true
     email: ostrovski.alex@gmail.com
     api_key: $NPM_KEY
     on:
       tags: true
-      node: 10
+      node: 12
