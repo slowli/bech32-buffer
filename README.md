@@ -1,12 +1,12 @@
 # Bech32 Encoding for Arbitrary Buffers
 
-[![Build status][travis-image]][travis-url]
+[![Build status][workflow-image]][workflow-url]
 [![Code coverage][coveralls-image]][coveralls-url]
 [![Code style][code-style-image]][code-style-url]
 [![Demo][demo-image]][demo-url]
 
-[travis-image]: https://img.shields.io/travis/slowli/bech32-buffer.svg?style=flat-square
-[travis-url]: https://travis-ci.org/slowli/bech32-buffer
+[workflow-image]: https://github.com/slowli/bech32-buffer/workflows/Node.js%20CI/badge.svg?branch=master
+[workflow-url]: https://github.com/slowli/bech32-buffer/actions
 [coveralls-image]: https://img.shields.io/coveralls/slowli/bech32-buffer.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
 [code-style-image]: https://img.shields.io/badge/code%20style-Airbnb-brightgreen.svg?style=flat-square

@@ -1,0 +1,65 @@
+name: Node.js CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [10.x, 12.x, 14.x]
+
+    steps:
+      - uses: actions/checkout@v2
+      - name: Install Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v1
+        with:
+          node-version: ${{ matrix.node-version }}
+
+      - run: npm ci
+      - run: npm run lint
+      - run: npm test
+        env:
+          CI: true
+      - run: npm run test-ts
+      - run: npm run test-browser
+      - run: npm run cover
+
+      - name: Collect coverage
+        if: success() && startsWith(matrix.node-version, '14')
+        run: mkdir -p coverage && npm run report-cover --silent -- --reporter=text-lcov > ./coverage/lcov.info
+      - name: Coveralls
+        uses: coverallsapp/github-action@master
+        if: success() && startsWith(matrix.node-version, '14')
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  site:
+    needs:
+      - build
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Install Node.js
+        uses: actions/setup-node@v1
+        with:
+          node-version: 14.x
+      - run: npm ci
+
+      - run: bash ./gh-pages.sh
+
+      - name: Deploy
+        uses: JamesIves/github-pages-deploy-action@releases/v3
+        with:
+          ACCESS_TOKEN: ${{ secrets.ACCESS_TOKEN }}
+          BRANCH: gh-pages
+          FOLDER: .gh-pages
+          SINGLE_COMMIT: true
