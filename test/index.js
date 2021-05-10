@@ -18,7 +18,7 @@ const { BitcoinAddress } = bech32;
  * @returns {string}
  */
 function encodeAddress(prefix, version, data) {
-  const len = Math.ceil(data.length * 8 / 5);
+  const len = Math.ceil((data.length * 8) / 5);
   const converted = new Uint8Array(len + 1);
   converted[0] = version;
   bech32.to5BitArray(data, converted.subarray(1));
@@ -73,7 +73,7 @@ describe('bech32', () => {
     vectors.validAddresses.forEach(({ address, script }) => {
       it(`should decode address "${address}" from test vectors`, () => {
         const decoded = bech32.decodeTo5BitArray(address);
-        expect(decoded.prefix).to.satisfy(hrp => hrp === 'bc' || hrp === 'tb');
+        expect(decoded.prefix).to.satisfy((hrp) => hrp === 'bc' || hrp === 'tb');
 
         // Need to remove script version separately, hence `.subarray`
         const decScript = bech32.from5BitArray(decoded.data.subarray(1));
@@ -145,7 +145,7 @@ describe('bech32', () => {
           const scriptData = Buffer.from(script, 'hex');
           const version = scriptData[0] % 32;
 
-          expect(decoded.prefix).to.satisfy(prefix => prefix === 'tb' || prefix === 'bc');
+          expect(decoded.prefix).to.satisfy((prefix) => prefix === 'tb' || prefix === 'bc');
           expect(decoded.scriptVersion).to.equal(version);
           expect(decoded.data).to.equalBytes(scriptData.subarray(2));
           expect(decoded.encode()).to.equal(address.toLowerCase());
