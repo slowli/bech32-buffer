@@ -14,7 +14,7 @@
 [demo-image]: https://img.shields.io/badge/demo-live-blue.svg?style=flat-square
 [demo-url]: https://slowli.github.io/bech32-buffer/
 
-**Bech32** is a new proposed Bitcoin address format specified in [BIP 173][bip-173].
+**Bech32** is a Bitcoin address format specified in [BIP 173][bip-173].
 Among its advantages are: better adaptability to QR codes and in voice conversations,
 and improved error detection. This library generalizes Bech32 to encode any
 (reasonably short) byte buffers.
@@ -156,8 +156,6 @@ Both implementations are Bitcoin-specific, and the reference implementation
 is also not in the Npm / yarn package manager.
 
 ## License
-
-(c) 2017 Alex Ostrovski
 
 **bech32-buffer** is available under [Apache-2.0 license](LICENSE).
 

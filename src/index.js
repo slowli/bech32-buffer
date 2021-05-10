@@ -27,11 +27,11 @@ type FiveBitArray = BitArray<5>;
  * @param {Uint8Array} src
  *   Input to convert
  * @param {?Uint8Array} dst
- *   Optional output buffer. If specified, the 5-bit sequence will be written there;
+ *   Optional output buffer. If specified, the sequence of 5-bit chunks will be written there;
  *   if not specified, the output buffer will be created from scratch. The length
  *   of `outBuffer` is not checked.
  * @returns {Uint8Array}
- *   Output buffer with a 5-bit sequence
+ *   Output buffer consisting of 5-bit chunks
  *
  * @api public
  */
@@ -56,9 +56,9 @@ export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
  * binary data to an array of 5-bit integers automatically.
  *
  * @param {string} prefix
- *   human-readable prefix to place at the beginning of the encoding
+ *   Human-readable prefix to place at the beginning of the encoding
  * @param {Uint8Array} data
- *   array of 5-bit integers with data to encode
+ *   Array of 5-bit integers with data to encode
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
  *
@@ -102,9 +102,9 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
  * Encodes binary data into Bech32 encoding.
  *
  * @param {string} prefix
- *   human-readable prefix to place at the beginning of the encoding
+ *   Human-readable prefix to place at the beginning of the encoding
  * @param {Uint8Array} data
- *   binary data to encode
+ *   Binary data to encode
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
  *
