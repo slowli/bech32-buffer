@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 set -e
 
@@ -29,10 +29,10 @@ cp "$QR_LIB" "$GH_DIR/$JS_URL"
 cp "$MAIN_LIB" "$GH_DIR/$JS_URL"
 
 echo "Editing HTML..."
-FNAME=`basename "$MAIN_LIB"`
+FNAME=$(basename "$MAIN_LIB")
 sed -r -i -e "s:(href|src)=\"../$MAIN_LIB\":\1=\"./$JS_URL/$FNAME\":" "$GH_DIR/index.html"
 
-FNAME=`basename "$QR_LIB"`
+FNAME=$(basename "$QR_LIB")
 sed -r -i -e "s:src=\"$FNAME\":src=\"./$JS_URL/$FNAME\":" "$GH_DIR/index.html"
 
 if [[ "x$1" == "xdeploy" ]]; then

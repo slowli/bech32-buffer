@@ -36,14 +36,14 @@ type FiveBitArray = BitArray<5>;
  * @api public
  */
 export function to5BitArray(src: Uint8Array, dst?: FiveBitArray): FiveBitArray {
-  const len = Math.ceil(src.length * 8 / 5);
+  const len = Math.ceil((src.length * 8) / 5);
   const realDst = dst || createBitArray(len);
 
   return toBits(src, 5, realDst);
 }
 
 export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
-  const len = Math.floor(src.length * 5 / 8);
+  const len = Math.floor((src.length * 5) / 8);
   const realDst = dst || new Uint8Array(len);
 
   return fromBits(src, 5, realDst);
@@ -285,7 +285,7 @@ export class BitcoinAddress {
     // Bitcoin addresses use Bech32 in a peculiar way - script version is
     // not a part of the serialized binary data, but is rather prepended as 5-bit value
     // before the rest of the script. This necessitates some plumbing here.
-    const len = Math.ceil(this.data.length * 8 / 5);
+    const len = Math.ceil((this.data.length * 8) / 5);
     const converted: FiveBitArray = createBitArray(len + 1);
     converted[0] = this.scriptVersion;
     to5BitArray(this.data, converted.subarray(1));
