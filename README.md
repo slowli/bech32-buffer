@@ -2,15 +2,12 @@
 
 [![Build status][workflow-image]][workflow-url]
 [![Code coverage][coveralls-image]][coveralls-url]
-[![Code style][code-style-image]][code-style-url]
 [![Demo][demo-image]][demo-url]
 
 [workflow-image]: https://github.com/slowli/bech32-buffer/workflows/Node.js%20CI/badge.svg?branch=master
 [workflow-url]: https://github.com/slowli/bech32-buffer/actions
 [coveralls-image]: https://img.shields.io/coveralls/slowli/bech32-buffer.svg?style=flat-square
 [coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
-[code-style-image]: https://img.shields.io/badge/code%20style-Airbnb-brightgreen.svg?style=flat-square
-[code-style-url]: https://github.com/airbnb/javascript
 [demo-image]: https://img.shields.io/badge/demo-live-blue.svg?style=flat-square
 [demo-url]: https://slowli.github.io/bech32-buffer/
 
@@ -23,8 +20,8 @@ and improved error detection. This library generalizes Bech32 to encode any
 
 ### Encoding data
 
-```none
-function encode(prefix, data)
+```typescript
+declare function encode(prefix: string, data: Uint8Array): string;
 ```
 
 Encodes binary `data` with the specified human-readable `prefix` into a Bech32 string.
@@ -49,16 +46,16 @@ String containing:
 #### Example
 
 ```javascript
-var bech32 = require('bech32-buffer');
-var data = new Uint8Array(20);
+const bech32 = require('bech32-buffer');
+const data = new Uint8Array(20);
 bech32.encode('test', data);
 // 'test1qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqql6aptf'
 ```
 
 ### Decoding data
 
-```none
-function decode(data)
+```typescript
+declare function decode(message: string): { prefix: string, data: Uint8Array };
 ```
 
 Extracts human-readable prefix and binary data from the Bech32-encoded string.
@@ -77,15 +74,15 @@ An object with the following fields:
 - **data:** Uint8Array  
   Binary data encoded into the input string
 
-The encoding may fail for a variety of reasons (e.g., invalid checksum, or Invalid
+The encoding may fail for a variety of reasons (e.g., invalid checksum, or invalid
 chars in the input). In this case, `decode()` throws an exception
 with a descriptive message.
 
 #### Example
 
 ```javascript
-var bech32 = require('bech32-buffer');
-var data = 'lost1qsyq7yqh9gk0szs5';
+const bech32 = require('bech32-buffer');
+const data = 'lost1qsyq7yqh9gk0szs5';
 bech32.decode(data);
 // {
 //   prefix: 'lost',
@@ -96,7 +93,7 @@ bech32.decode(data);
 ### Bitcoin addresses
 
 ```typescript
-class BitcoinAddress {
+declare class BitcoinAddress {
   prefix: 'bc' | 'tb';
   scriptVersion: number;
   data: Uint8Array;
@@ -116,8 +113,8 @@ types are defined per [BIP 141]. Encoding constraints are defined per [BIP 173].
 #### Example
 
 ```javascript
-var bech32 = require('bech32-buffer');
-var address = bech32.BitcoinAddress.decode('BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4');
+const { BitcoinAddress } = require('bech32-buffer');
+const address = BitcoinAddress.decode('BC1QW508D6QEJXTDG4Y5R3ZARVARY0C5XW7KV8F3T4');
 // address.prefix === 'bc'
 // address.scriptVersion === 0
 // address.data.length === 20
