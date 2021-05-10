@@ -6,9 +6,9 @@
 
 [workflow-image]: https://github.com/slowli/bech32-buffer/workflows/Node.js%20CI/badge.svg?branch=master
 [workflow-url]: https://github.com/slowli/bech32-buffer/actions
-[coveralls-image]: https://img.shields.io/coveralls/slowli/bech32-buffer.svg?style=flat-square
+[coveralls-image]: https://img.shields.io/coveralls/slowli/bech32-buffer.svg
 [coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
-[demo-image]: https://img.shields.io/badge/demo-live-blue.svg?style=flat-square
+[demo-image]: https://img.shields.io/badge/demo-live-blue.svg
 [demo-url]: https://slowli.github.io/bech32-buffer/
 
 **Bech32** is a Bitcoin address format specified in [BIP 173][bip-173].
