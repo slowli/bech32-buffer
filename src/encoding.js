@@ -10,30 +10,12 @@ const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
 
 export const CHECKSUM_LENGTH = 6;
 
-interface Lookup<K, V> {
-  get(key: K): V | void;
-  set(key: K, value: V): Lookup<K, V>;
-}
-
 // Reverse lookup for characters
 const CHAR_LOOKUP = (() => {
-  const lookup: Lookup<string, number> = typeof Map !== 'undefined' ? new Map() : {
-    map: {},
-
-    get(i: string): number {
-      return this.map[i];
-    },
-
-    set(i: string, v: number) {
-      this.map[i] = v;
-      return this;
-    },
-  };
-
+  const lookup = new Map();
   for (let i = 0; i < CHARSET.length; i += 1) {
     lookup.set(CHARSET[i], i);
   }
-
   return lookup;
 })();
 
@@ -91,7 +73,7 @@ export function createChecksum(buffer: FiveBitArray): void {
  * @api private
  */
 export function encode(buffer: FiveBitArray): string {
-  return Array.prototype.reduce.call(buffer, (acc, bits) => acc + CHARSET[bits], '');
+  return buffer.reduce((acc, bits) => acc + CHARSET[bits], '');
 }
 
 /**
