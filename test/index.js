@@ -61,6 +61,11 @@ describe('bech32', () => {
       const prefix = 'Ю';
       expect(() => bech32.encode(prefix, new Uint8Array(10))).to.throw(/invalid char/i);
     });
+
+    it('should disallow unknown encodings', () => {
+      expect(() => bech32.encode('test', new Uint8Array(8), 'bogus'))
+        .to.throw(/invalid encoding/i);
+    });
   });
 
   describe('decode', () => {
@@ -189,6 +194,11 @@ describe('bech32', () => {
 
       it('should fail to decode address with invalid prefix', () => {
         expect(() => BitcoinAddress.decode('abcdef1qpzry9x8gf2tvdw0s3jn54khce6mua7lmqqqxw')).to.throw(/prefix/i);
+      });
+
+      it('should fail to decode bech32m address for v0 script', () => {
+        const address = 'tb1q0xlxvlhemja6c4dqv22uapctqupfhlxm9h8z3k2e72q4k9hcz7vq24jc47';
+        expect(() => BitcoinAddress.decode(address)).to.throw(/unexpected encoding/i);
       });
     });
 

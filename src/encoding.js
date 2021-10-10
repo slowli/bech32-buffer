@@ -77,7 +77,7 @@ export function createChecksum(buffer: FiveBitArray, encoding: Encoding): void {
     case 'bech32m':
       checksumConstant = BECH32M_CHECKSUM; break;
     default:
-      throw Error(`Unexpected encoding value: ${encoding}; expected bech32 or bech32m`);
+      throw Error(`Invalid encoding value: ${encoding}; expected bech32 or bech32m`);
   }
 
   const mod = polymod(buffer) ^ checksumConstant;
