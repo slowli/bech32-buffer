@@ -12,15 +12,18 @@
     },
     {
       "script": "8128751e76e8199196d454941c45d1b3a323f1433bd6751e76e8199196d454941c45d1b3a323f1433bd6",
-      "address": "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7k7grplx"
+      "address": "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7k7grplx",
+      "bech32mAddress": "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7kt5nd6y"
     },
     {
       "script": "9002751e",
-      "address": "BC1SW50QA3JX3S"
+      "address": "BC1SW50QA3JX3S",
+      "bech32mAddress": "BC1SW50QGDZ25J"
     },
     {
       "script": "8210751e76e8199196d454941c45d1b3a323",
-      "address": "bc1zw508d6qejxtdg4y5r3zarvaryvg6kdaj"
+      "address": "bc1zw508d6qejxtdg4y5r3zarvaryvg6kdaj",
+      "bech32mAddress": "bc1zw508d6qejxtdg4y5r3zarvaryvaxxpcs"
     },
     {
       "script": "0020000000c4a5cad46221b2a187905e5266362b99d5e91c6ce24d165dab93e86433",

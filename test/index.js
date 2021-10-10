@@ -84,12 +84,28 @@ describe('bech32', () => {
       it(`should decode address "${address}" from test vectors`, () => {
         const decoded = bech32.decodeTo5BitArray(address);
         expect(decoded.prefix).to.satisfy((hrp) => hrp === 'bc' || hrp === 'tb');
+        expect(decoded.encoding).to.equal('bech32');
 
         // Need to remove script version separately, hence `.subarray`
         const decScript = bech32.from5BitArray(decoded.data.subarray(1));
 
         expect(decScript).to.equalBytes(script.substring(4));
       });
+    });
+
+    vectors.validAddresses.forEach(({ bech32mAddress: address, script }) => {
+      if (address !== undefined) {
+        it(`should decode bech32m address "${address}" from test vectors`, () => {
+          const decoded = bech32.decodeTo5BitArray(address);
+          expect(decoded.prefix).to.satisfy((hrp) => hrp === 'bc' || hrp === 'tb');
+          expect(decoded.encoding).to.equal('bech32m');
+
+          // Need to remove script version separately, hence `.subarray`
+          const decScript = bech32.from5BitArray(decoded.data.subarray(1));
+
+          expect(decScript).to.equalBytes(script.substring(4));
+        });
+      }
     });
 
     vectors.invalidAddresses.forEach(({ address, reason }) => {
@@ -149,17 +165,26 @@ describe('bech32', () => {
     });
 
     describe('decode', () => {
-      vectors.validAddresses.forEach(({ address, script }) => {
-        it(`should decode address "${address}" from test vectors`, () => {
-          const decoded = BitcoinAddress.decode(address);
+      vectors.validAddresses.forEach(({ address, bech32mAddress, script }) => {
+        const actualAddress = bech32mAddress ?? address;
+
+        it(`should decode address "${actualAddress}" from test vectors`, () => {
+          const decoded = BitcoinAddress.decode(actualAddress);
           const scriptData = Buffer.from(script, 'hex');
           const version = scriptData[0] % 32;
 
           expect(decoded.prefix).to.satisfy((prefix) => prefix === 'tb' || prefix === 'bc');
           expect(decoded.scriptVersion).to.equal(version);
           expect(decoded.data).to.equalBytes(scriptData.subarray(2));
-          expect(decoded.encode()).to.equal(address.toLowerCase());
+          expect(decoded.encode()).to.equal(actualAddress.toLowerCase());
         });
+
+        if (bech32mAddress != null) {
+          it(`should not decode outdated address "${address}" from test vectors`, () => {
+            expect(() => BitcoinAddress.decode(address))
+              .to.throw(/unexpected encoding/i);
+          });
+        }
       });
 
       it('should fail to decode address with invalid prefix', () => {
@@ -168,9 +193,11 @@ describe('bech32', () => {
     });
 
     describe('type', () => {
-      vectors.validAddresses.forEach(({ address, type }) => {
-        it(`should guess the type of address "${address}" (${type})`, () => {
-          const decoded = BitcoinAddress.decode(address);
+      vectors.validAddresses.forEach(({ address, bech32mAddress, type }) => {
+        const actualAddress = bech32mAddress ?? address;
+
+        it(`should guess the type of address "${actualAddress}" (${type})`, () => {
+          const decoded = BitcoinAddress.decode(actualAddress);
           expect(decoded.type()).to.equal(type);
         });
       });

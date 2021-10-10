@@ -244,7 +244,10 @@ export class BitcoinAddress {
   data: Uint8Array;
 
   /**
-   * Decodes a Bitcoin address from a Bech32 string.
+   * Decodes a Bitcoin address from a Bech32(m) string.
+   * As per BIP 350, the original encoding is expected for version 0 scripts, while
+   * other script versions expect the modified encoding.
+   *
    * This method does not check whether the address is well-formed;
    * use `type()` method on returned address to find that out.
    *
@@ -252,12 +255,21 @@ export class BitcoinAddress {
    * @returns {BitcoinAddress}
    */
   static decode(message: string): BitcoinAddress {
-    const { prefix, data } = decodeTo5BitArray(message);
+    const { prefix, data, encoding } = decodeTo5BitArray(message);
+
     // Extra check to satisfy Flow.
     if (prefix !== 'bc' && prefix !== 'tb') {
       throw new Error('Invalid human-readable prefix, "bc" or "tb" expected');
     }
-    return new this(prefix, data[0], from5BitArray(data.subarray(1)));
+
+    const scriptVersion = data[0];
+    if (scriptVersion === 0 && encoding !== 'bech32') {
+      throw Error(`Unexpected encoding ${encoding} used for version 0 script`);
+    }
+    if (scriptVersion > 0 && encoding !== 'bech32m') {
+      throw Error(`Unexpected encoding ${encoding} used for version ${scriptVersion} script`);
+    }
+    return new this(prefix, scriptVersion, from5BitArray(data.subarray(1)));
   }
 
   constructor(prefix: 'bc' | 'tb', scriptVersion: number, data: Uint8Array) {
@@ -299,10 +311,12 @@ export class BitcoinAddress {
   }
 
   /**
-   * Encodes this address in Bech32 format.
+   * Encodes this address in Bech32 or Bech32m format, depending on the script version.
+   * Version 0 scripts are encoded using original Bech32 encoding as per BIP 173,
+   * while versions 1-16 are encoded using the modified encoding as per BIP 350.
    *
    * @returns {string}
-   *   Bech32-encoded address
+   *   Bech32(m)-encoded address
    */
   encode(): string {
     // Bitcoin addresses use Bech32 in a peculiar way - script version is
@@ -312,6 +326,8 @@ export class BitcoinAddress {
     const converted: FiveBitArray = createBitArray(len + 1);
     converted[0] = this.scriptVersion;
     to5BitArray(this.data, converted.subarray(1));
-    return encode5BitArray(this.prefix, converted);
+
+    const encoding = (this.scriptVersion === 0) ? 'bech32' : 'bech32m';
+    return encode5BitArray(this.prefix, converted, encoding);
   }
 }
