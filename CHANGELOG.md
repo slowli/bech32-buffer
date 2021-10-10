@@ -5,6 +5,10 @@ The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+### Added
+
+- Support [Bech32m encoding] for arbitrary data and Bitcoin addresses.
+
 ## 0.1.3 - 2021-05-10
 
 ### Added
@@ -40,3 +44,5 @@ The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 ## 0.1.0 - 2017-07-23
 
 The initial release of `bech32-buffer`.
+
+[Bech32m encoding]: https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki
