@@ -66,7 +66,17 @@ describe('bech32', () => {
   describe('decode', () => {
     vectors.validChecksums.forEach(({ encoded, hrp }) => {
       it(`should decode message with valid checksum "${encoded}"`, () => {
-        expect(bech32.decode(encoded)).to.have.property('prefix', hrp);
+        const decoded = bech32.decode(encoded);
+        expect(decoded).to.have.property('prefix', hrp);
+        expect(decoded).to.have.property('encoding', 'bech32');
+      });
+    });
+
+    vectors.validBech32mChecksums.forEach(({ encoded, hrp }) => {
+      it(`should decode bech32m message with valid checksum "${encoded}"`, () => {
+        const decoded = bech32.decode(encoded);
+        expect(decoded).to.have.property('prefix', hrp);
+        expect(decoded).to.have.property('encoding', 'bech32m');
       });
     });
 

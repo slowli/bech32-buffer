@@ -50,6 +50,28 @@
       "hrp": "split"
     }
   ],
+  "validBech32mChecksums": [
+    {
+      "encoded": "A1LQFN3A",
+      "hrp": "a"
+    },
+    {
+      "encoded": "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+      "hrp": "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber1"
+    },
+    {
+      "encoded": "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
+      "hrp": "abcdef"
+    },
+    {
+      "encoded": "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
+      "hrp": "split"
+    },
+    {
+      "encoded": "?1v759aa",
+      "hrp": "?"
+    }
+  ],
   "invalidAddresses": [
     {
       "address": "bc1qw508d6qejxtdg4y5r3zarvary0c5xw7kv8f3t5",

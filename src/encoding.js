@@ -5,8 +5,14 @@ import type { BitArray } from './bit-converter';
 
 type FiveBitArray = BitArray<5>;
 
+/** Encoding variation. Influences checksum computations. */
+export type Encoding = 'bech32' | 'bech32m';
+
 // Alphabet for Bech32
 const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+
+// Checksum constant for Bech32m.
+const BECH32M_CHECKSUM = 0x2bc830a3;
 
 export const CHECKSUM_LENGTH = 6;
 
@@ -34,7 +40,7 @@ function polymod(values: FiveBitArray): number {
 }
 
 /**
- * Expands a prefix onto the specified output buffer.
+ * Expands a prefix into the specified output buffer.
  */
 export function expandPrefix(prefix: string, outBuffer: FiveBitArray): void {
   for (let i = 0; i < prefix.length; i += 1) {
@@ -48,16 +54,33 @@ export function expandPrefix(prefix: string, outBuffer: FiveBitArray): void {
 /**
  * Verifies the checksum for a particular buffer.
  */
-export function verifyChecksum(buffer: FiveBitArray): boolean {
-  return polymod(buffer) === 1;
+export function verifyChecksum(buffer: FiveBitArray): Encoding | void {
+  switch (polymod(buffer)) {
+    case 1:
+      return 'bech32';
+    case BECH32M_CHECKSUM:
+      return 'bech32m';
+    default:
+      return undefined;
+  }
 }
 
 /**
  * Creates a checksum for a buffer and writes it to the last 6 5-bit groups
  * of the buffer.
  */
-export function createChecksum(buffer: FiveBitArray): void {
-  const mod = polymod(buffer) ^ 1;
+export function createChecksum(buffer: FiveBitArray, encoding: Encoding): void {
+  let checksumConstant;
+  switch (encoding) {
+    case 'bech32':
+      checksumConstant = 1; break;
+    case 'bech32m':
+      checksumConstant = BECH32M_CHECKSUM; break;
+    default:
+      throw Error(`Unexpected encoding value: ${encoding}; expected bech32 or bech32m`);
+  }
+
+  const mod = polymod(buffer) ^ checksumConstant;
   for (let i = 0; i < CHECKSUM_LENGTH; i += 1) {
     const shift = 5 * (5 - i);
     buffer[buffer.length - CHECKSUM_LENGTH + i] = (mod >> shift) & 31;
