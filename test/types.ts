@@ -7,14 +7,14 @@
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
 import {
-  to5BitArray,
-  from5BitArray,
-  encode5BitArray,
+  BitcoinAddress,
+  decode,
   decodeTo5BitArray,
   encode,
-  decode,
-  BitcoinAddress,
+  encode5BitArray,
   FiveBitArray,
+  from5BitArray,
+  to5BitArray,
 } from '..';
 
 // `assert` is easier to type-check than `expect`.
@@ -41,8 +41,18 @@ function testArrayEncoder() {
 function testEncoder() {
   const buffer = Uint8Array.from([0, 1, 2, 3, 4]);
   const encoded: string = encode('test', buffer);
-  const { prefix, data: decoded } = decode(encoded);
+  const { prefix, data: decoded, encoding } = decode(encoded);
   assert.equal(prefix, 'test');
+  assert.equal(encoding, 'bech32');
+  assert.equalBytes(decoded, buffer);
+}
+
+function testModifiedEncoder() {
+  const buffer = Uint8Array.from([0, 1, 2, 3, 4]);
+  const encoded: string = encode('test', buffer, 'bech32m');
+  const { prefix, data: decoded, encoding } = decode(encoded);
+  assert.equal(prefix, 'test');
+  assert.equal(encoding, 'bech32m');
   assert.equalBytes(decoded, buffer);
 }
 
@@ -63,4 +73,5 @@ function testBitcoinAddress() {
 testArrayConverter();
 testArrayEncoder();
 testEncoder();
+testModifiedEncoder();
 testBitcoinAddress();
