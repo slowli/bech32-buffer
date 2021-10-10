@@ -12,15 +12,18 @@
     },
     {
       "script": "8128751e76e8199196d454941c45d1b3a323f1433bd6751e76e8199196d454941c45d1b3a323f1433bd6",
-      "address": "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7k7grplx"
+      "address": "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7k7grplx",
+      "bech32mAddress": "bc1pw508d6qejxtdg4y5r3zarvary0c5xw7kw508d6qejxtdg4y5r3zarvary0c5xw7kt5nd6y"
     },
     {
       "script": "9002751e",
-      "address": "BC1SW50QA3JX3S"
+      "address": "BC1SW50QA3JX3S",
+      "bech32mAddress": "BC1SW50QGDZ25J"
     },
     {
       "script": "8210751e76e8199196d454941c45d1b3a323",
-      "address": "bc1zw508d6qejxtdg4y5r3zarvaryvg6kdaj"
+      "address": "bc1zw508d6qejxtdg4y5r3zarvaryvg6kdaj",
+      "bech32mAddress": "bc1zw508d6qejxtdg4y5r3zarvaryvaxxpcs"
     },
     {
       "script": "0020000000c4a5cad46221b2a187905e5266362b99d5e91c6ce24d165dab93e86433",
@@ -48,6 +51,28 @@
     {
       "encoded": "split1checkupstagehandshakeupstreamerranterredcaperred2y9e3w",
       "hrp": "split"
+    }
+  ],
+  "validBech32mChecksums": [
+    {
+      "encoded": "A1LQFN3A",
+      "hrp": "a"
+    },
+    {
+      "encoded": "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber11sg7hg6",
+      "hrp": "an83characterlonghumanreadablepartthatcontainsthetheexcludedcharactersbioandnumber1"
+    },
+    {
+      "encoded": "abcdef1l7aum6echk45nj3s0wdvt2fg8x9yrzpqzd3ryx",
+      "hrp": "abcdef"
+    },
+    {
+      "encoded": "split1checkupstagehandshakeupstreamerranterredcaperredlc445v",
+      "hrp": "split"
+    },
+    {
+      "encoded": "?1v759aa",
+      "hrp": "?"
     }
   ],
   "invalidAddresses": [

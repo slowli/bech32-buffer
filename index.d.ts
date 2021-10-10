@@ -6,6 +6,11 @@ export declare type FiveBitArray = Uint8Array;
 // there seems to be no way to express this better.
 
 /**
+ * Encoding from the Bech32 family used during encoding / decoding.
+ */
+export declare type Encoding = 'bech32' | 'bech32m';
+
+/**
  * Converts a Uint8Array into a Uint8Array variant, in which each element
  * encodes 5 bits of the original byte array.
  *
@@ -44,10 +49,29 @@ export declare function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint
  *   Human-readable prefix to place at the beginning of the encoding
  * @param data
  *   Array of 5-bit integers with data to encode
+ * @param encoding
+ *   Encoding to use; influences the checksum computation. If not specified,
+ *   Bech32 encoding will be used.
  * @returns
- *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
+ *   Bech32(m) encoding of data in the form `<prefix>1<base32 of data><checksum>`
  */
-export declare function encode5BitArray(prefix: string, data: FiveBitArray): string;
+export declare function encode5BitArray(
+  prefix: string,
+  data: FiveBitArray,
+  encoding?: Encoding
+): string;
+
+/**
+ * Result of a decoding operation.
+ */
+export interface DecodeResult<T = Uint8Array> {
+  /** Human-readable prefix. */
+  prefix: string;
+  /** Variation of the Bech32 encoding inferred from the checksum. */
+  encoding: Encoding;
+  /** Decoded data. */
+  data: T;
+}
 
 /**
  * Decodes data from Bech32 encoding into an array of 5-bit integers.
@@ -61,7 +85,7 @@ export declare function encode5BitArray(prefix: string, data: FiveBitArray): str
  *   Decoded object with `prefix` and `data` fields, which contain the human-readable
  *   prefix and the array of 5-bit integers respectively.
  */
-export declare function decodeTo5BitArray(message: string): { prefix: string, data: FiveBitArray };
+export declare function decodeTo5BitArray(message: string): DecodeResult<FiveBitArray>;
 
 /**
  * Encodes binary data into Bech32 encoding.
@@ -70,10 +94,17 @@ export declare function decodeTo5BitArray(message: string): { prefix: string, da
  *   Human-readable prefix to place at the beginning of the encoding
  * @param data
  *   Binary data to encode
+ * @param encoding
+ *   Encoding to use; influences the checksum computation. If not specified,
+ *   Bech32 encoding will be used.
  * @returns
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
  */
-export declare function encode(prefix: string, data: Uint8Array): string;
+export declare function encode(
+  prefix: string,
+  data: Uint8Array,
+  encoding?: Encoding
+): string;
 
 /**
  * Decodes data from Bech32 encoding into an array of 5-bit integers.
@@ -84,14 +115,14 @@ export declare function encode(prefix: string, data: Uint8Array): string;
  *   Decoded object with `prefix` and `data` fields, which contain the human-readable
  *   prefix and the decoded binary data respectively.
  */
-export declare function decode(message: string): { prefix: string, data: Uint8Array };
+export declare function decode(message: string): DecodeResult;
 
 /**
  * Bitcoin address.
  */
 export declare class BitcoinAddress {
   /**
-   * Human-readable prefix. Equal to `'bc'` (for mainnet addresses)
+   * Human-readable prefix. Equals `'bc'` (for mainnet addresses)
    * or `'tb'` (for testnet addresses).
    */
   prefix: 'bc' | 'tb';
@@ -106,6 +137,9 @@ export declare class BitcoinAddress {
 
   /**
    * Decodes a Bitcoin address from a Bech32 string.
+   * As per BIP 350, the original encoding is expected for version 0 scripts, while
+   * other script versions expect the modified encoding.
+   *
    * This method does not check whether the address is well-formed;
    * use `type()` method on returned address to find that out.
    */
@@ -118,12 +152,14 @@ export declare class BitcoinAddress {
    * it is checked that `scriptVersion` is between 0 and 16). Additionally,
    * for `scriptVersion == 0` it is checked that `data` is either 20 or 32 bytes long.
    *
-   * @throws If provided fields do not pass validation.
+   * @throws {Error} If provided fields do not pass validation.
    */
   constructor(prefix: 'bc' | 'tb', scriptVersion: number, data: Uint8Array);
 
   /**
-   * Encodes this address in Bech32 format.
+   * Encodes this address in Bech32 or Bech32m format, depending on the script version.
+   * Version 0 scripts are encoded using original Bech32 encoding as per BIP 173,
+   * while versions 1-16 are encoded using the modified encoding as per BIP 350.
    */
   encode(): string;
 

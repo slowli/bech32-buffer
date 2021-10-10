@@ -82,7 +82,7 @@
   <header class="body-header">
     <div class="content">
       <h1>bech32-buffer</h1>
-      <p class="lead">Bech32 is a Bitcoin address format <a href="https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki">proposed by Pieter Wuille and Greg Maxwell</a>.
+      <p class="lead">Bech32 is a Bitcoin address format proposed by Pieter Wuille and Greg Maxwell in <a href="https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki">BIP 173</a> and later amended by <a href="https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki">BIP 350</a>.
       Besides Bitcoin addresses, Bech32 can encode any short binary data.</p>
     </div>
   </header>
@@ -105,9 +105,24 @@
             <form>
               <div class="align-height tab-content">
                 <div class="tab-pane" id="encode-data" role="tabpanel" aria-labelledby="encode-data-tab">
-                  <label for="hrp" class="form-label">Tag</label>
-                  <input type="text" id="hrp" class="form-control" placeholder="Tag"/>
-                  <div class="form-text text-muted small">A short tag describing what a Bech32-encoded string is used for.</div>
+                  <div class="mb-3 row">
+                    <label for="hrp" class="col-3 col-form-label">Tag</label>
+                    <div class="col-9">
+                      <input type="text" id="hrp" class="form-control" placeholder="Tag"/>
+                    </div>
+                    <div class="col-12 form-text text-muted small">A short tag describing what a Bech32-encoded string is used for.</div>
+                  </div>
+                  <div class="mb-3 row">
+                    <label class="col-3 col-form-label">Encoding</label>
+                    <div class="col-9">
+                      <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="encoding-options" id="encoding-bech32" autocomplete="off">
+                        <label for="encoding-bech32" class="btn btn-outline-primary" title="Original encoding proposed in BIP 173">Bech32</label>
+                        <input type="radio" class="btn-check" name="encoding-options" id="encoding-bech32m" autocomplete="off" checked>
+                        <label for="encoding-bech32m" class="btn btn-outline-primary" title="Amended encoding from BIP 350">Bech32m</label>
+                      </div>
+                    </div>
+                  </div>
                 </div>
                 <div class="tab-pane active" id="encode-btc" role="tabpanel" aria-labelledby="encode-btc-tab">
                   <div class="mb-3 row">
@@ -247,7 +262,8 @@
           const btcAddress = new bech32.BitcoinAddress(prefix, version, buffer);
           enc = btcAddress.encode();
         } else {
-          enc = bech32.encode(hrp.val(), buffer);
+          const encoding = $('#encoding-bech32').prop('checked') ? 'bech32' : 'bech32m';
+          enc = bech32.encode(hrp.val(), buffer, encoding);
         }
         encoded.val(enc);
       } catch (e) {
@@ -278,6 +294,11 @@
         } else {
           dec = bech32.decode(encoded.val());
           hrp.val(dec.prefix);
+
+          var selectedEncoding = (dec.encoding === 'bech32') ? $('#encoding-bech32') : $('#encoding-bech32m');
+          $('input[name=encoding-options]').parent().removeClass('active');
+          selectedEncoding.prop('checked', true);
+          selectedEncoding.parent().addClass('active');
         }
         data.val(toHexString(dec.data));
       } catch (e) {

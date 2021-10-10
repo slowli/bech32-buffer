@@ -10,6 +10,7 @@ import {
   encode as base32Encode,
   decodeWithPrefix,
 } from './encoding';
+import type { Encoding } from './encoding';
 
 // Minimum char code that could be present in the encoded message
 const MIN_CHAR_CODE = 33;
@@ -19,6 +20,12 @@ const MAX_CHAR_CODE = 126;
 const MAX_ENC_LENGTH = 90;
 
 type FiveBitArray = BitArray<5>;
+
+interface DecodeResult<T = Uint8Array> {
+  prefix: string;
+  encoding: Encoding;
+  data: T;
+}
 
 /**
  * Converts a Uint8Array into a Uint8Array variant, in which each element
@@ -59,12 +66,19 @@ export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
  *   Human-readable prefix to place at the beginning of the encoding
  * @param {Uint8Array} data
  *   Array of 5-bit integers with data to encode
+ * @param {Encoding} encoding
+ *   Encoding to use; influences the checksum computation. If not specified,
+ *   Bech32 encoding will be used.
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
  *
  * @api public
  */
-export function encode5BitArray(prefix: string, data: FiveBitArray): string {
+export function encode5BitArray(
+  prefix: string,
+  data: FiveBitArray,
+  encoding: Encoding = 'bech32',
+): string {
   // 1. Allocate buffer for all operations
   const len = 2 * prefix.length + 1 // expanded prefix
     + data.length // five-bit data encoding
@@ -91,7 +105,7 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
   dataBuffer.set(data);
 
   // 4. Create the checksum
-  createChecksum(buffer);
+  createChecksum(buffer, encoding);
 
   // 5. Convert into string
   const encoded = base32Encode(buffer.subarray(2 * prefix.length + 1));
@@ -105,13 +119,20 @@ export function encode5BitArray(prefix: string, data: FiveBitArray): string {
  *   Human-readable prefix to place at the beginning of the encoding
  * @param {Uint8Array} data
  *   Binary data to encode
+ * @param {Encoding} encoding
+ *   Encoding to use; influences the checksum computation. If not specified,
+ *   Bech32 encoding will be used.
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
  *
  * @api public
  */
-export function encode(prefix: string, data: Uint8Array): string {
-  return encode5BitArray(prefix, to5BitArray(data));
+export function encode(
+  prefix: string,
+  data: Uint8Array,
+  encoding: Encoding = 'bech32',
+): string {
+  return encode5BitArray(prefix, to5BitArray(data), encoding);
 }
 
 /**
@@ -122,13 +143,13 @@ export function encode(prefix: string, data: Uint8Array): string {
  *
  * @param {string} message
  *   Bech32-encoded message
- * @returns {Object}
+ * @returns {DecodeResult<FiveBitArray>}
  *   Decoded object with `prefix` and `data` fields, which contain the human-readable
  *   prefix and the array of 5-bit integers respectively.
  *
  * @api public
  */
-export function decodeTo5BitArray(message: string): { prefix: string, data: FiveBitArray } {
+export function decodeTo5BitArray(message: string): DecodeResult<FiveBitArray> {
   // Check preconditions
 
   // 1. Message length
@@ -173,12 +194,14 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
   const bitArray = decodeWithPrefix(prefix, lowerCaseMsg.substring(sepIdx + 1));
 
   // 7. Checksum
-  if (!verifyChecksum(bitArray)) {
+  const encoding = verifyChecksum(bitArray);
+  if (encoding === undefined) {
     throw new Error('Invalid checksum');
   }
 
   return {
     prefix,
+    encoding,
     // Strip off the prefix from the front and the checksum from the end
     data: bitArray.subarray(2 * prefix.length + 1, bitArray.length - CHECKSUM_LENGTH),
   };
@@ -189,15 +212,15 @@ export function decodeTo5BitArray(message: string): { prefix: string, data: Five
  *
  * @param {string} message
  *   Bech32-encoded message
- * @returns {Object}
+ * @returns {DecodeResult}
  *   Decoded object with `prefix` and `data` fields, which contain the human-readable
  *   prefix and the decoded binary data respectively.
  *
  * @api public
  */
-export function decode(message: string): { prefix: string, data: Uint8Array } {
-  const { prefix, data: bitArray } = decodeTo5BitArray(message);
-  return { prefix, data: from5BitArray(bitArray) };
+export function decode(message: string): DecodeResult<> {
+  const { prefix, encoding, data: bitArray } = decodeTo5BitArray(message);
+  return { prefix, encoding, data: from5BitArray(bitArray) };
 }
 
 /**
@@ -221,7 +244,10 @@ export class BitcoinAddress {
   data: Uint8Array;
 
   /**
-   * Decodes a Bitcoin address from a Bech32 string.
+   * Decodes a Bitcoin address from a Bech32(m) string.
+   * As per BIP 350, the original encoding is expected for version 0 scripts, while
+   * other script versions expect the modified encoding.
+   *
    * This method does not check whether the address is well-formed;
    * use `type()` method on returned address to find that out.
    *
@@ -229,12 +255,21 @@ export class BitcoinAddress {
    * @returns {BitcoinAddress}
    */
   static decode(message: string): BitcoinAddress {
-    const { prefix, data } = decodeTo5BitArray(message);
+    const { prefix, data, encoding } = decodeTo5BitArray(message);
+
     // Extra check to satisfy Flow.
     if (prefix !== 'bc' && prefix !== 'tb') {
       throw new Error('Invalid human-readable prefix, "bc" or "tb" expected');
     }
-    return new this(prefix, data[0], from5BitArray(data.subarray(1)));
+
+    const scriptVersion = data[0];
+    if (scriptVersion === 0 && encoding !== 'bech32') {
+      throw Error(`Unexpected encoding ${encoding} used for version 0 script`);
+    }
+    if (scriptVersion > 0 && encoding !== 'bech32m') {
+      throw Error(`Unexpected encoding ${encoding} used for version ${scriptVersion} script`);
+    }
+    return new this(prefix, scriptVersion, from5BitArray(data.subarray(1)));
   }
 
   constructor(prefix: 'bc' | 'tb', scriptVersion: number, data: Uint8Array) {
@@ -276,10 +311,12 @@ export class BitcoinAddress {
   }
 
   /**
-   * Encodes this address in Bech32 format.
+   * Encodes this address in Bech32 or Bech32m format, depending on the script version.
+   * Version 0 scripts are encoded using original Bech32 encoding as per BIP 173,
+   * while versions 1-16 are encoded using the modified encoding as per BIP 350.
    *
    * @returns {string}
-   *   Bech32-encoded address
+   *   Bech32(m)-encoded address
    */
   encode(): string {
     // Bitcoin addresses use Bech32 in a peculiar way - script version is
@@ -289,6 +326,8 @@ export class BitcoinAddress {
     const converted: FiveBitArray = createBitArray(len + 1);
     converted[0] = this.scriptVersion;
     to5BitArray(this.data, converted.subarray(1));
-    return encode5BitArray(this.prefix, converted);
+
+    const encoding = (this.scriptVersion === 0) ? 'bech32' : 'bech32m';
+    return encode5BitArray(this.prefix, converted, encoding);
   }
 }

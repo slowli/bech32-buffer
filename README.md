@@ -11,7 +11,7 @@
 [demo-image]: https://img.shields.io/badge/demo-live-blue.svg
 [demo-url]: https://slowli.github.io/bech32-buffer/
 
-**Bech32** is a Bitcoin address format specified in [BIP 173][bip-173].
+**Bech32** is a Bitcoin address format specified in [BIP 173][bip-173] and [BIP 350][bip-350].
 Among its advantages are: better adaptability to QR codes and in voice conversations,
 and improved error detection. This library generalizes Bech32 to encode any
 (reasonably short) byte buffers.
@@ -21,10 +21,14 @@ and improved error detection. This library generalizes Bech32 to encode any
 ### Encoding data
 
 ```typescript
-declare function encode(prefix: string, data: Uint8Array): string;
+declare function encode(
+  prefix: string,
+  data: Uint8Array,
+  encoding: 'bech32' | 'bech32m' = 'bech32'
+): string;
 ```
 
-Encodes binary `data` with the specified human-readable `prefix` into a Bech32 string.
+Encodes binary `data` with the specified human-readable `prefix` into a Bech32(m) string.
 
 #### Arguments
 
@@ -33,6 +37,10 @@ Encodes binary `data` with the specified human-readable `prefix` into a Bech32 s
   ASCII chars in the range 33-126
 - **data:** Uint8Array  
   Binary data to encode
+- **encoding:** `bech32` or `bech32m`  
+  Specifies whether to use the original Bech32 encoding from [BIP 173][bip-173]
+  or the modified encoding from [BIP 350][bip-350]; they differ
+  in how a checksum is computed. If omitted, the original encoding is used.
 
 #### Return value
 
@@ -55,7 +63,11 @@ bech32.encode('test', data);
 ### Decoding data
 
 ```typescript
-declare function decode(message: string): { prefix: string, data: Uint8Array };
+declare function decode(message: string): {
+  prefix: string,
+  encoding: 'bech32' | 'bech32m',
+  data: Uint8Array
+};
 ```
 
 Extracts human-readable prefix and binary data from the Bech32-encoded string.
@@ -71,10 +83,12 @@ An object with the following fields:
 
 - **prefix:** string  
   Human-readable prefix
+- **encoding:** `bech32` or `bech32m`  
+  Encoding variant inferred from the checksum.
 - **data:** Uint8Array  
   Binary data encoded into the input string
 
-The encoding may fail for a variety of reasons (e.g., invalid checksum, or invalid
+Decoding may fail for a variety of reasons (e.g., invalid checksum, or invalid
 chars in the input). In this case, `decode()` throws an exception
 with a descriptive message.
 
@@ -86,6 +100,7 @@ const data = 'lost1qsyq7yqh9gk0szs5';
 bech32.decode(data);
 // {
 //   prefix: 'lost',
+//   encoding: 'bech32',
 //   data: Uint8Array([ 4, 8, 15, 16, 23, 42 ])
 // }
 ```
@@ -108,7 +123,8 @@ declare class BitcoinAddress {
 Provides basic functionality to work with Bech32 encoding of Bitcoin addresses.
 Addresses can be `decode`d from strings and `encode`d into strings.
 It is also possible to check the `type` of an address. P2WSH and P2WPKH address
-types are defined per [BIP 141]. Encoding constraints are defined per [BIP 173].
+types are defined per [BIP 141]. Encoding constraints are defined per [BIP 173][bip-173]
+and [BIP 350][bip-350].
 
 #### Example
 
@@ -143,6 +159,8 @@ directory of the package.
 
 [BIP 173][bip-173] is authored by Pieter Wuille and Greg Maxwell and is licensed
 under the 2-clause BSD license.
+[BIP 350][bip-350] is authored by Pieter Wuille and is licensed
+under the 2-clause BSD license.
 
 There are at least 2 existing implementations of Bech32 for JavaScript:
 
@@ -157,8 +175,8 @@ is also not in the Npm / yarn package manager.
 **bech32-buffer** is available under [Apache-2.0 license](LICENSE).
 
 [bip-173]: https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki
+[bip-350]: https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki
 [ref]: https://github.com/sipa/bech32/tree/master/ref/javascript
 [bech32]: https://github.com/bitcoinjs/bech32
 [bech32-pkg]: https://www.npmjs.com/package/bech32
 [BIP 141]: https://github.com/bitcoin/bips/blob/master/bip-0141.mediawiki
-[BIP 173]: https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki
