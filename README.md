@@ -1,4 +1,4 @@
-# Bech32 Encoding for Arbitrary Buffers
+# Bech32(m) Encoding for Arbitrary Buffers
 
 [![Build status][workflow-image]][workflow-url]
 [![Code coverage][coveralls-image]][coveralls-url]
@@ -13,8 +13,8 @@
 
 **Bech32** is a Bitcoin address format specified in [BIP 173][bip-173] and [BIP 350][bip-350].
 Among its advantages are: better adaptability to QR codes and in voice conversations,
-and improved error detection. This library generalizes Bech32 to encode any
-(reasonably short) byte buffers.
+and improved error detection. This library generalizes Bech32 and its modified version
+(Bech32m) to encode any reasonably short byte buffers.
 
 ## Usage
 
