@@ -1,6 +1,6 @@
 {
   "name": "bech32-buffer",
-  "version": "0.1.3",
+  "version": "0.2.0-rc.0",
   "description": "Bech32(m) encoding for byte buffers",
   "repository": {
     "type": "git",
@@ -17,7 +17,8 @@
     "lib",
     "dist",
     "examples",
-    "index.d.ts"
+    "index.d.ts",
+    "CHANGELOG.md"
   ],
   "types": "index.d.ts",
   "scripts": {

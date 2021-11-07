@@ -5,9 +5,12 @@ The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+## 0.2.0-rc.0 - 2021-11-07
+
 ### Added
 
 - Support [Bech32m encoding] for arbitrary data and Bitcoin addresses.
+  The new functionality is available on [the demo web page](https://slowli.github.io/bech32-buffer/).
 
 ## 0.1.3 - 2021-05-10
 
