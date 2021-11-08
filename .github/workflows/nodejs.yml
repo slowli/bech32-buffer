@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [10.x, 12.x, 14.x, 16.x]
+        node-version: [14.x, 16.x, 17.x]
 
     steps:
       - uses: actions/checkout@v2
@@ -31,11 +31,11 @@ jobs:
       - run: npm run cover
 
       - name: Collect coverage
-        if: success() && startsWith(matrix.node-version, '14')
+        if: success() && startsWith(matrix.node-version, '16')
         run: mkdir -p coverage && npm run report-cover --silent -- --reporter=text-lcov > ./coverage/lcov.info
       - name: Coveralls
         uses: coverallsapp/github-action@master
-        if: success() && startsWith(matrix.node-version, '14')
+        if: success() && startsWith(matrix.node-version, '16')
         with:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
@@ -51,7 +51,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v1
         with:
-          node-version: 14.x
+          node-version: 16.x
       - run: npm ci
 
       - run: bash ./gh-pages.sh
