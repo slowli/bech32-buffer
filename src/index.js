@@ -254,7 +254,7 @@ export class BitcoinAddress {
    * @param {string} message
    * @returns {BitcoinAddress}
    */
-  static decode(message: string): BitcoinAddress {
+  static decode(message: string): this {
     const { prefix, data, encoding } = decodeTo5BitArray(message);
 
     // Extra check to satisfy Flow.
