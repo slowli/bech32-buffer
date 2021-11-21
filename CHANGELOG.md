@@ -5,6 +5,10 @@ The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+## 0.2.0 - 2021-11-21
+
+No substantial changes compared to the 0.2.0-rc.0 release.
+
 ## 0.2.0-rc.0 - 2021-11-07
 
 ### Added

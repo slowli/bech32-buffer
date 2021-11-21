@@ -1,6 +1,6 @@
 {
   "name": "bech32-buffer",
-  "version": "0.2.0-rc.0",
+  "version": "0.2.0",
   "description": "Bech32(m) encoding for byte buffers",
   "repository": {
     "type": "git",
