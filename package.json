@@ -59,7 +59,7 @@
     "eslint": "^8.2.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.24.2",
-    "flow-bin": "^0.171.0",
+    "flow-bin": "^0.173.0",
     "karma": "^6.3.4",
     "karma-browserify": "^8.0.0",
     "karma-chrome-launcher": "^3.1.0",
