@@ -32,10 +32,10 @@ function testArrayEncoder() {
   const buffer = Uint8Array.from([1, 2, 3, 4, 5]);
   const fiveBitsBuffer: FiveBitArray = to5BitArray(buffer);
   const encoded: string = encode5BitArray('foo', fiveBitsBuffer);
-  assert(encoded.startsWith('foo1'));
+  assert.isTrue(encoded.startsWith('foo1'));
   const { prefix, data } = decodeTo5BitArray(encoded);
   assert.equal(prefix, 'foo');
-  assert(data.every((byte, i) => byte === fiveBitsBuffer[i]));
+  assert.isTrue(data.every((byte, i) => byte === fiveBitsBuffer[i]));
 }
 
 function testEncoder() {
@@ -58,7 +58,7 @@ function testModifiedEncoder() {
 
 function testBitcoinAddress() {
   let address = new BitcoinAddress('tb', 0, new Uint8Array(20));
-  assert((<string> address.encode()).startsWith('tb1'));
+  assert.isTrue((<string> address.encode()).startsWith('tb1'));
   assert.equal(address.data.length, 20);
   assert.equal(address.prefix, 'tb');
   assert.equal(address.scriptVersion, 0);
