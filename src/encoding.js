@@ -171,8 +171,8 @@ export function detectCase(
 
     // 3. Allowed chars in the encoding
     if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
-      throw new TypeError(`Invalid char in ${messageDescription}: ${ord}; ` +
-        `should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
+      throw new TypeError(`Invalid char in ${messageDescription}: ${ord}; `
+        + `should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
     }
     hasUpperCase = hasUpperCase || (ord >= 65 && ord <= 90);
     hasLowerCase = hasLowerCase || (ord >= 97 && ord <= 122);
