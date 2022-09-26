@@ -29,6 +29,9 @@ declare function encode(
 ```
 
 Encodes binary `data` with the specified human-readable `prefix` into a Bech32(m) string.
+The case is preserved: if the prefix is uppercase, then the output will be uppercase
+as well; otherwise, the output will be lowercase (including the case when the prefix does
+not contain any letters).
 
 #### Arguments
 

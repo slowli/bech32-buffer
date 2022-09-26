@@ -42,6 +42,10 @@ export declare function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint
 /**
  * Encodes binary data into Bech32 encoding.
  *
+ * The case is preserved: if the prefix is uppercase, then the output will be uppercase
+ * as well; otherwise, the output will be lowercase (including the case when the prefix does
+ * not contain any letters).
+ *
  * Ordinarily, you may want to use `encode` because it converts
  * binary data to an array of 5-bit integers automatically.
  *
@@ -54,6 +58,7 @@ export declare function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint
  *   Bech32 encoding will be used.
  * @returns
  *   Bech32(m) encoding of data in the form `<prefix>1<base32 of data><checksum>`
+ * @throws If the prefix is mixed-case or contains chars that are not eligible for Bech32 encoding
  */
 export declare function encode5BitArray(
   prefix: string,
@@ -90,6 +95,10 @@ export declare function decodeTo5BitArray(message: string): DecodeResult<FiveBit
 /**
  * Encodes binary data into Bech32 encoding.
  *
+ * The case is preserved: if the prefix is uppercase, then the output will be uppercase
+ * as well; otherwise, the output will be lowercase (including the case when the prefix does
+ * not contain any letters).
+ *
  * @param prefix
  *   Human-readable prefix to place at the beginning of the encoding
  * @param data
@@ -99,6 +108,7 @@ export declare function decodeTo5BitArray(message: string): DecodeResult<FiveBit
  *   Bech32 encoding will be used.
  * @returns
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
+ * @throws If the prefix is mixed-case or contains chars that are not eligible for Bech32 encoding
  */
 export declare function encode(
   prefix: string,
