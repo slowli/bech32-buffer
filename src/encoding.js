@@ -10,9 +10,12 @@ export type Encoding = 'bech32' | 'bech32m';
 
 // Alphabet for Bech32
 const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
-
 // Checksum constant for Bech32m.
 const BECH32M_CHECKSUM = 0x2bc830a3;
+// Minimum char code that could be present in the encoded message
+const MIN_CHAR_CODE = 33;
+// Maximum char code that could be present in the encoded message
+const MAX_CHAR_CODE = 126;
 
 export const CHECKSUM_LENGTH = 6;
 
@@ -144,4 +147,43 @@ export function decodeWithPrefix(prefix: string, message: string): FiveBitArray 
   decode(message, dst.subarray(2 * prefix.length + 1));
 
   return dst;
+}
+
+/**
+ * Detects the character case used in `message`. If the message doesn't
+ * contain either lower-case or upper-case chars, returns `null`.
+ *
+ * @param {string} message
+ * @param {string} messageDescription
+ *   Human-readable description of the message to put into an error message, should any occur
+ * @returns {'lower'|'upper'|null}
+ * @throws if the message contains both lowercase and uppercase chars,
+ *   or contains chars not valid for Bech32(m) encoding
+ */
+export function detectCase(
+  message: string,
+  messageDescription: string = 'message',
+): 'lower' | 'upper' | null {
+  let hasLowerCase = false;
+  let hasUpperCase = false;
+  for (let i = 0; i < message.length; i += 1) {
+    const ord = message.charCodeAt(i);
+
+    // 3. Allowed chars in the encoding
+    if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
+      throw new TypeError(`Invalid char in ${messageDescription}: ${ord}; ` +
+        `should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
+    }
+    hasUpperCase = hasUpperCase || (ord >= 65 && ord <= 90);
+    hasLowerCase = hasLowerCase || (ord >= 97 && ord <= 122);
+  }
+  if (hasLowerCase && hasUpperCase) {
+    throw new TypeError(`Mixed-case ${messageDescription}`);
+  } else if (hasUpperCase) {
+    return 'upper';
+  } else if (hasLowerCase) {
+    return 'lower';
+  } else {
+    return null;
+  }
 }

@@ -9,13 +9,10 @@ import {
   verifyChecksum,
   encode as base32Encode,
   decodeWithPrefix,
+  detectCase,
 } from './encoding';
 import type { Encoding } from './encoding';
 
-// Minimum char code that could be present in the encoded message
-const MIN_CHAR_CODE = 33;
-// Maximum char code that could be present in the encoded message
-const MAX_CHAR_CODE = 126;
 // Maximum encoded message length
 const MAX_ENC_LENGTH = 90;
 
@@ -87,18 +84,12 @@ export function encode5BitArray(
   if (len - prefix.length > MAX_ENC_LENGTH) {
     throw new Error(`Message to be produced is too long (max ${MAX_ENC_LENGTH} supported)`);
   }
-
-  for (let i = 0; i < prefix.length; i += 1) {
-    const ord = prefix.charCodeAt(i);
-    if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
-      throw new TypeError(`Invalid char in prefix: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
-    }
-  }
+  const prefixCase = detectCase(prefix, 'prefix') ?? 'lower';
 
   const buffer = createBitArray(len);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
-  expandPrefix(prefix, buffer.subarray(0, 2 * prefix.length + 1));
+  expandPrefix(prefix.toLowerCase(), buffer.subarray(0, 2 * prefix.length + 1));
 
   // 3. Copy `data` into the output
   const dataBuffer = buffer.subarray(2 * prefix.length + 1, buffer.length - CHECKSUM_LENGTH);
@@ -108,7 +99,10 @@ export function encode5BitArray(
   createChecksum(buffer, encoding);
 
   // 5. Convert into string
-  const encoded = base32Encode(buffer.subarray(2 * prefix.length + 1));
+  let encoded = base32Encode(buffer.subarray(2 * prefix.length + 1));
+  if (prefixCase === 'upper') {
+    encoded = encoded.toUpperCase();
+  }
   return `${prefix}1${encoded}`;
 }
 
@@ -158,22 +152,7 @@ export function decodeTo5BitArray(message: string): DecodeResult<FiveBitArray> {
   }
 
   // 2. Mixed case
-  let hasLowerCase = false;
-  let hasUpperCase = false;
-  for (let i = 0; i < message.length; i += 1) {
-    const ord = message.charCodeAt(i);
-
-    // 3. Allowed chars in the encoding
-    if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
-      throw new TypeError(`Invalid char in message: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
-    }
-    hasLowerCase = hasLowerCase || (ord >= 65 && ord <= 90);
-    hasUpperCase = hasUpperCase || (ord >= 97 && ord <= 122);
-  }
-  if (hasLowerCase && hasUpperCase) {
-    throw new TypeError('Mixed-case message');
-  }
-
+  detectCase(message); // we don't care about the result, only about checks.
   const lowerCaseMsg = message.toLowerCase();
 
   // 4. Existence of the separator char
