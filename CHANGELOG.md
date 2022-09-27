@@ -5,6 +5,8 @@ The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+## 0.2.1 - 2022-09-27
+
 ### Fixed
 
 - Fix encoding with uppercase prefix. Previously, such prefixes led to incorrect
