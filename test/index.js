@@ -41,6 +41,21 @@ describe('bech32', () => {
       });
     });
 
+    it('should preserve uppercase prefix', () => {
+      const data = new Uint8Array(20);
+      const encoded = bech32.encode('T3ST', data);
+      expect(encoded).to.match(/^T3ST1[A-Z\d]+$/);
+
+      const { prefix, data: restored } = bech32.decode(encoded);
+      expect(prefix).to.equal('t3st');
+      expect(restored).to.equalBytes(data);
+    });
+
+    it('should fail on mixed-case prefix', () => {
+      expect(() => bech32.encode('Test', new Uint8Array(20)))
+        .to.throw(/Mixed-case prefix/);
+    });
+
     it('should not encode an overly long message', () => {
       const prefix = 'test';
       const data = new Uint8Array(50);

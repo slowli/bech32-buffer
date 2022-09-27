@@ -2,6 +2,8 @@
 
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
+import dirtyChai from 'dirty-chai';
+
 import {
   expandPrefix,
   CHECKSUM_LENGTH,
@@ -9,10 +11,11 @@ import {
   verifyChecksum,
   encode,
   decode,
+  detectCase,
 } from '../src/encoding';
 import { toBits } from '../src/bit-converter';
 
-const { expect } = chai.use(chaiBytes);
+const { expect } = chai.use(chaiBytes).use(dirtyChai);
 
 describe('Bech32 low-level encoding', () => {
   describe('CHECKSUM_LENGTH', () => {
@@ -94,6 +97,30 @@ describe('Bech32 low-level encoding', () => {
   describe('decode', () => {
     it('should decode a short array', () => {
       expect(decode('yg0sh')).to.equalBytes([4, 8, 15, 16, 23]);
+    });
+  });
+
+  describe('detectCase', () => {
+    it('should detect lowercase message', () => {
+      expect(detectCase('test')).to.equal('lower');
+      expect(detectCase('t3st@')).to.equal('lower');
+    });
+
+    it('should detect uppercase message', () => {
+      expect(detectCase('TEST')).to.equal('upper');
+      expect(detectCase('T3ST@')).to.equal('upper');
+    });
+
+    it('should return null on no-case message', () => {
+      expect(detectCase('1337')).to.be.null();
+    });
+
+    it('should error on mixed-case', () => {
+      expect(() => detectCase('Test')).to.throw(/Mixed-case message/);
+    });
+
+    it('should error on invalid char', () => {
+      expect(() => detectCase('тест')).to.throw(/Invalid char in message/);
     });
   });
 });

@@ -9,13 +9,10 @@ import {
   verifyChecksum,
   encode as base32Encode,
   decodeWithPrefix,
+  detectCase,
 } from './encoding';
 import type { Encoding } from './encoding';
 
-// Minimum char code that could be present in the encoded message
-const MIN_CHAR_CODE = 33;
-// Maximum char code that could be present in the encoded message
-const MAX_CHAR_CODE = 126;
 // Maximum encoded message length
 const MAX_ENC_LENGTH = 90;
 
@@ -59,6 +56,10 @@ export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
 /**
  * Encodes binary data into Bech32 encoding.
  *
+ * The case is preserved: if the prefix is uppercase, then the output will be uppercase
+ * as well; otherwise, the output will be lowercase (including the case when the prefix does
+ * not contain any letters).
+ *
  * Ordinarily, you may want to use [`encode`](#encode) because it converts
  * binary data to an array of 5-bit integers automatically.
  *
@@ -71,6 +72,7 @@ export function from5BitArray(src: FiveBitArray, dst?: Uint8Array): Uint8Array {
  *   Bech32 encoding will be used.
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
+ * @throws If the prefix is mixed-case or contains chars that are not eligible for Bech32 encoding
  *
  * @api public
  */
@@ -87,18 +89,12 @@ export function encode5BitArray(
   if (len - prefix.length > MAX_ENC_LENGTH) {
     throw new Error(`Message to be produced is too long (max ${MAX_ENC_LENGTH} supported)`);
   }
-
-  for (let i = 0; i < prefix.length; i += 1) {
-    const ord = prefix.charCodeAt(i);
-    if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
-      throw new TypeError(`Invalid char in prefix: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
-    }
-  }
+  const prefixCase = detectCase(prefix, 'prefix') ?? 'lower';
 
   const buffer = createBitArray(len);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
-  expandPrefix(prefix, buffer.subarray(0, 2 * prefix.length + 1));
+  expandPrefix(prefix.toLowerCase(), buffer.subarray(0, 2 * prefix.length + 1));
 
   // 3. Copy `data` into the output
   const dataBuffer = buffer.subarray(2 * prefix.length + 1, buffer.length - CHECKSUM_LENGTH);
@@ -108,12 +104,19 @@ export function encode5BitArray(
   createChecksum(buffer, encoding);
 
   // 5. Convert into string
-  const encoded = base32Encode(buffer.subarray(2 * prefix.length + 1));
+  let encoded = base32Encode(buffer.subarray(2 * prefix.length + 1));
+  if (prefixCase === 'upper') {
+    encoded = encoded.toUpperCase();
+  }
   return `${prefix}1${encoded}`;
 }
 
 /**
  * Encodes binary data into Bech32 encoding.
+ *
+ * The case is preserved: if the prefix is uppercase, then the output will be uppercase
+ * as well; otherwise, the output will be lowercase (including the case when the prefix does
+ * not contain any letters).
  *
  * @param {string} prefix
  *   Human-readable prefix to place at the beginning of the encoding
@@ -124,6 +127,7 @@ export function encode5BitArray(
  *   Bech32 encoding will be used.
  * @returns {string}
  *   Bech32 encoding of data in the form `<prefix>1<base32 of data><checksum>`
+ * @throws If the prefix is mixed-case or contains chars that are not eligible for Bech32 encoding
  *
  * @api public
  */
@@ -158,22 +162,7 @@ export function decodeTo5BitArray(message: string): DecodeResult<FiveBitArray> {
   }
 
   // 2. Mixed case
-  let hasLowerCase = false;
-  let hasUpperCase = false;
-  for (let i = 0; i < message.length; i += 1) {
-    const ord = message.charCodeAt(i);
-
-    // 3. Allowed chars in the encoding
-    if (ord < MIN_CHAR_CODE || ord > MAX_CHAR_CODE) {
-      throw new TypeError(`Invalid char in message: ${ord}; should be in ASCII range ${MIN_CHAR_CODE}-${MAX_CHAR_CODE}`);
-    }
-    hasLowerCase = hasLowerCase || (ord >= 65 && ord <= 90);
-    hasUpperCase = hasUpperCase || (ord >= 97 && ord <= 122);
-  }
-  if (hasLowerCase && hasUpperCase) {
-    throw new TypeError('Mixed-case message');
-  }
-
+  detectCase(message); // we don't care about the result, only about checks.
   const lowerCaseMsg = message.toLowerCase();
 
   // 4. Existence of the separator char
