@@ -4,7 +4,7 @@
 [![Code coverage][coveralls-image]][coveralls-url]
 [![Demo][demo-image]][demo-url]
 
-[workflow-image]: https://github.com/slowli/bech32-buffer/workflows/Node.js%20CI/badge.svg?branch=master
+[workflow-image]: https://github.com/slowli/bech32-buffer/workflows/CI/badge.svg?branch=master
 [workflow-url]: https://github.com/slowli/bech32-buffer/actions
 [coveralls-image]: https://img.shields.io/coveralls/slowli/bech32-buffer.svg
 [coveralls-url]: https://coveralls.io/github/slowli/bech32-buffer
