@@ -21,7 +21,7 @@ export const CHECKSUM_LENGTH = 6;
 
 // Reverse lookup for characters
 const CHAR_LOOKUP = (() => {
-  const lookup = new Map();
+  const lookup = new Map<string, number>();
   for (let i = 0; i < CHARSET.length; i += 1) {
     lookup.set(CHARSET[i], i);
   }
@@ -141,7 +141,7 @@ export function decode(message: string, dst?: FiveBitArray): FiveBitArray {
  */
 export function decodeWithPrefix(prefix: string, message: string): FiveBitArray {
   const len = message.length + 2 * prefix.length + 1;
-  const dst = createBitArray(len);
+  const dst = createBitArray<5>(len);
 
   expandPrefix(prefix, dst.subarray(0, 2 * prefix.length + 1));
   decode(message, dst.subarray(2 * prefix.length + 1));

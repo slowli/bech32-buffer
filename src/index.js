@@ -91,7 +91,7 @@ export function encode5BitArray(
   }
   const prefixCase = detectCase(prefix, 'prefix') ?? 'lower';
 
-  const buffer = createBitArray(len);
+  const buffer = createBitArray<5>(len);
 
   // 2. Expand the human-readable prefix into the beginning of the buffer
   expandPrefix(prefix.toLowerCase(), buffer.subarray(0, 2 * prefix.length + 1));
