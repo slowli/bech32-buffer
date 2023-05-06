@@ -26,13 +26,12 @@ jobs:
       - run: npm test
         env:
           CI: true
-      - run: npm run test-ts
-      - run: npm run test-browser
       - run: npm run cover
 
       - name: Collect coverage
         if: success() && startsWith(matrix.node-version, '16')
-        run: mkdir -p coverage && npm run report-cover --silent -- --reporter=text-lcov > ./coverage/lcov.info
+        run: |
+          mkdir -p coverage && npm run cover:report --silent -- --reporter=text-lcov > ./coverage/lcov.info
       - name: Coveralls
         uses: coverallsapp/github-action@master
         if: success() && startsWith(matrix.node-version, '16')
