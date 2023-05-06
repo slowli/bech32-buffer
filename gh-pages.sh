@@ -25,7 +25,7 @@ echo "Copying libraries..."
 cp "$QR_LIB" "$GH_DIR/$JS_URL"
 
 # Copy the browser version of this library
-[ -e "$MAIN_LIB" ] || npm run browser
+[ -e "$MAIN_LIB" ] || npm run prepare:browser
 cp "$MAIN_LIB" "$GH_DIR/$JS_URL"
 
 echo "Editing HTML..."
