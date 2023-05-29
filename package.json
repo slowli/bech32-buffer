@@ -10,7 +10,7 @@
     "url": "https://github.com/slowli/bech32-buffer/issues"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=14"
   },
   "main": "lib/index.js",
   "files": [
@@ -46,9 +46,9 @@
   "license": "Apache-2.0",
   "devDependencies": {
     "@babel/cli": "^7.21.0",
-    "@babel/core": "^7.21.0",
+    "@babel/core": "^7.22.1",
     "@babel/eslint-parser": "^7.21.3",
-    "@babel/preset-env": "^7.21.4",
+    "@babel/preset-env": "^7.22.2",
     "@babel/preset-flow": "^7.21.4",
     "@babel/register": "^7.21.0",
     "@types/chai": "^4.2.22",
@@ -60,10 +60,10 @@
     "chai-bytes": "^0.1.2",
     "cross-env": "^7.0.3",
     "dirty-chai": "^2.0.1",
-    "eslint": "^8.39.0",
+    "eslint": "^8.41.0",
     "eslint-config-airbnb-base": "^15.0.0",
     "eslint-plugin-import": "^2.24.2",
-    "flow-bin": "^0.205.1",
+    "flow-bin": "^0.207.0",
     "karma": "^6.4.0",
     "karma-browserify": "^8.0.0",
     "karma-chrome-launcher": "^3.2.0",
