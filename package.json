@@ -10,7 +10,7 @@
     "url": "https://github.com/slowli/bech32-buffer/issues"
   },
   "engines": {
-    "node": ">=8"
+    "node": ">=14"
   },
   "main": "lib/index.js",
   "files": [
