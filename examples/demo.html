@@ -241,9 +241,9 @@
       if (timeout) clearTimeout(timeout);
 
       btn.attr('data-bs-content', '<span class="text-' + type + '">' + message + '</span>');
-      btn[0].popover.show();
+      btn[0].customPopover.show();
       timeouts[id] = setTimeout(function() {
-        btn[0].popover.hide();
+        btn[0].customPopover.hide();
         delete timeouts[id];
       }, 3000);
     }
@@ -314,7 +314,7 @@
     });
 
     $('#encode,#decode').each(function () {
-      this.popover = new bootstrap.Popover(this, {
+      this.customPopover = new bootstrap.Popover(this, {
         trigger: 'manual',
         html: true
       });
