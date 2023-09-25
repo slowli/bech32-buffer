@@ -113,7 +113,7 @@
                     <div class="col-12 form-text text-muted small">A short tag describing what a Bech32-encoded string is used for.</div>
                   </div>
                   <div class="mb-3 row">
-                    <label class="col-3 col-form-label">Encoding</label>
+                    <span class="col-3 col-form-label">Encoding</span>
                     <div class="col-9">
                       <div class="btn-group" role="group">
                         <input type="radio" class="btn-check" name="encoding-options" id="encoding-bech32" autocomplete="off">
@@ -126,7 +126,7 @@
                 </div>
                 <div class="tab-pane active" id="encode-btc" role="tabpanel" aria-labelledby="encode-btc-tab">
                   <div class="mb-3 row">
-                    <label class="col-3 col-form-label">Network</label>
+                    <span class="col-3 col-form-label">Network</span>
                     <div class="col-9">
                       <div class="btn-group" role="group">
                         <input type="radio" class="btn-check" name="btc-network-options" id="btc-mainnet" autocomplete="off" checked>
@@ -151,7 +151,7 @@
                 <div class="form-text text-muted small">Binary data (in hex) to be encoded into Bech32.</div>
               </div>
 
-              <button type="button" id="encode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Encode!">Encode</button>
+              <button type="button" id="encode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Encode">Encode</button>
               <a id="random" title="Generate random data" class="ms-3" href="#">Random data</a>
             </form>
           </div>
@@ -170,7 +170,7 @@
                 <div class="form-text text-muted small">Encoded Bech32 string.</div>
               </div>
 
-              <button type="button" id="decode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Decode!">Decode</button>
+              <button type="button" id="decode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Decode">Decode</button>
             </form>
           </div>
         </div>
@@ -193,7 +193,7 @@
 
   <script>
   /* eslint-env browser */
-  /* global bech32 */
+  /* global bech32, bootstrap */
   (function () {
     /**
      * Converts a byte array into a hex string.
@@ -218,7 +218,7 @@
       }
       let buffer = new Uint8Array(str.length / 2);
       for (let i = 0; i < buffer.length; i++) {
-        buffer[i] = parseInt(str.substr(2 * i, 2), 16);
+        buffer[i] = parseInt(str.substring(2 * i, 2 * i + 2), 16);
       }
       return buffer;
     }
