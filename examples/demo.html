@@ -7,7 +7,7 @@
   <meta name="description" content="Demo of bech32-buffer package capabilities">
 
   <title>Bech32 Demo</title>
-  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-wEmeIV1mKuiNpC+IOBjI7aAzPcEZeedi5yW5f2yOq55WWLwNGmvvx4Um1vskeMj0" crossorigin="anonymous">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
   <style>
   textarea {
     resize: none;
@@ -151,7 +151,7 @@
                 <div class="form-text text-muted small">Binary data (in hex) to be encoded into Bech32.</div>
               </div>
 
-              <button type="button" id="encode" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="bottom" data-content="">Encode</button>
+              <button type="button" id="encode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Encode!">Encode</button>
               <a id="random" title="Generate random data" class="ms-3" href="#">Random data</a>
             </form>
           </div>
@@ -170,7 +170,7 @@
                 <div class="form-text text-muted small">Encoded Bech32 string.</div>
               </div>
 
-              <button type="button" id="decode" class="btn btn-primary" data-container="body" data-toggle="popover" data-placement="top" data-content="">Decode</button>
+              <button type="button" id="decode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Decode!">Decode</button>
             </form>
           </div>
         </div>
@@ -178,7 +178,7 @@
     </div>
 
     <footer class="page-footer small text-muted">
-      <span class="copyright">© 2021 Alex Ostrovski</span>
+      <span class="copyright">© 2023 Alex Ostrovski</span>
       <div class="float-none float-sm-end">
         <a href="https://github.com/slowli/bech32-buffer">GitHub</a>&nbsp;•
         <a href="https://npmjs.com/package/bech32-buffer">Npm</a>&nbsp;•
@@ -187,14 +187,12 @@
     </footer>
   </div>
 
-  <script src="https://code.jquery.com/jquery-3.6.0.slim.min.js" integrity="sha256-u7e5khyithlIdTpu22PHhENmPcRdFiHRjhAuHcs05RI=" crossorigin="anonymous"></script>
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-p34f1UUtsS3wqzfto5wAAmdvj+osOnFyQFpp4Ua3gs/ZVWx6oOypYoCJhGGScy+8" crossorigin="anonymous"></script>
-
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
   <script src="qrcode.min.js"></script>
   <script src="../dist/bech32-buffer.min.js"></script>
 
   <script>
-  /* eslint-env browser, jquery */
+  /* eslint-env browser */
   /* global bech32 */
   (function () {
     /**
@@ -225,47 +223,59 @@
       return buffer;
     }
 
-    const hrp = $('#hrp');
-    const data = $('#data');
-    const encoded = $('#encoded');
-    const encodeBtn = $('#encode');
-    const decodeBtn = $('#decode');
-    const randomBtn = $('#random');
-    const scriptVersion = $('#script-version');
+    const hrp = document.getElementById('hrp');
+    const data = document.getElementById('data');
+    const encoded = document.getElementById('encoded');
+    const encodeBtn = document.getElementById('encode');
+    const decodeBtn = document.getElementById('decode');
+    const randomBtn = document.getElementById('random');
+    const scriptVersion = document.getElementById('script-version');
 
     const timeouts = {};
 
     function report(type, btn, message) {
-      const id = btn[0].id;
+      const id = btn.id;
       const timeout = timeouts[id];
       if (timeout) clearTimeout(timeout);
 
-      btn.attr('data-bs-content', '<span class="text-' + type + '">' + message + '</span>');
-      btn[0].popover.show();
-      timeouts[id] = setTimeout(function() {
-        btn[0].popover.hide();
+      const popover = bootstrap.Popover.getInstance(btn);
+      popover.setContent({
+        '.popover-body': '<span class="text-' + type + '">' + message + '</span>'
+      });
+      popover.show();
+      timeouts[id] = setTimeout(() => {
+        popover.hide();
         delete timeouts[id];
       }, 3000);
     }
 
-    encodeBtn.click(function() {
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach((element) => {
+      new bootstrap.Popover(element, {
+        trigger: 'manual',
+        html: true,
+      });
+    });
+
+    encodeBtn.onclick = () => {
       let enc;
-      const btc = $('#encode-btc').hasClass('active');
+      const btc = document.getElementById('encode-btc').classList.contains('active');
 
       try {
-        const buffer = fromHexString(data.val());
+        const buffer = fromHexString(data.value);
         if (!buffer) throw new TypeError('Invalid hex encoding of data');
 
         if (btc) {
-          const prefix = $('#btc-mainnet').prop('checked') ? 'bc' : 'tb';
-          const version = parseInt(scriptVersion.val());
+          const prefix = document.getElementById('btc-mainnet').checked ? 'bc' : 'tb';
+          const version = parseInt(scriptVersion.value);
           const btcAddress = new bech32.BitcoinAddress(prefix, version, buffer);
           enc = btcAddress.encode();
         } else {
-          const encoding = $('#encoding-bech32').prop('checked') ? 'bech32' : 'bech32m';
-          enc = bech32.encode(hrp.val(), buffer, encoding);
+          const encoding = document.getElementById('encoding-bech32').checked
+            ? 'bech32'
+            : 'bech32m';
+          enc = bech32.encode(hrp.value, buffer, encoding);
         }
-        encoded.val(enc);
+        encoded.value = enc;
       } catch (e) {
         report('danger', encodeBtn, 'Error: ' + e.message);
         return;
@@ -275,32 +285,36 @@
       const qr = qrcode(0, 'M');
       qr.addData(enc.toUpperCase(), 'Alphanumeric');
       qr.make();
-      $('#qrcode').html(qr.createSvgTag(4, 0));
-    });
+      document.getElementById('qrcode').innerHTML = qr.createSvgTag(4, 0);
+    };
 
-    decodeBtn.click(function() {
+    decodeBtn.onclick = () => {
       let dec;
-      const btc = $('#encode-btc').hasClass('active');
+      const btc = document.getElementById('encode-btc').classList.contains('active');
 
       try {
         if (btc) {
-          dec = bech32.BitcoinAddress.decode(encoded.val());
-          scriptVersion.val(dec.scriptVersion);
+          dec = bech32.BitcoinAddress.decode(encoded.value);
+          scriptVersion.value = dec.scriptVersion;
 
-          var selectedNetwork = (dec.prefix === 'bc') ? $('#btc-mainnet') : $('#btc-testnet');
-          $('input[name=btc-network-options]').parent().removeClass('active');
-          selectedNetwork.prop('checked', true);
-          selectedNetwork.parent().addClass('active');
+          const selectedNetwork = (dec.prefix === 'bc')
+            ? document.getElementById('btc-mainnet')
+            : document.getElementById('btc-testnet');
+          document.querySelector('input[name=btc-network-options]').parentElement.classList.remove('active');
+          selectedNetwork.checked = true;
+          selectedNetwork.parentElement.classList.add('active');
         } else {
-          dec = bech32.decode(encoded.val());
-          hrp.val(dec.prefix);
+          dec = bech32.decode(encoded.value);
+          hrp.value = dec.prefix;
 
-          var selectedEncoding = (dec.encoding === 'bech32') ? $('#encoding-bech32') : $('#encoding-bech32m');
-          $('input[name=encoding-options]').parent().removeClass('active');
-          selectedEncoding.prop('checked', true);
-          selectedEncoding.parent().addClass('active');
+          const selectedEncoding = (dec.encoding === 'bech32')
+            ? document.getElementById('encoding-bech32')
+            : document.getElementById('encoding-bech32m');
+          document.querySelector('input[name=encoding-options]').parentElement.classList.remove('active');
+          selectedEncoding.checked = true;
+          selectedEncoding.parentElement.classList.add('active');
         }
-        data.val(toHexString(dec.data));
+        data.value = toHexString(dec.data);
       } catch (e) {
         report('danger', decodeBtn, 'Error: ' + e.message);
         return;
@@ -308,38 +322,31 @@
 
       report('success', decodeBtn, 'Data decoded (' + dec.data.length + ' bytes)');
       const qr = qrcode(0, 'M');
-      qr.addData(encoded.val().toUpperCase(), 'Alphanumeric');
+      qr.addData(encoded.value.toUpperCase(), 'Alphanumeric');
       qr.make();
-      $('#qrcode').html(qr.createSvgTag(4, 0));
-    });
+      document.getElementById('qrcode').innerHTML = qr.createSvgTag(4, 0);
+    };
 
-    $('#encode,#decode').each(function () {
-      this.popover = new bootstrap.Popover(this, {
-        trigger: 'manual',
-        html: true
-      });
-    });
-
-    randomBtn.click(function(e) {
+    randomBtn.onclick = (e) => {
       e.preventDefault();
-      const btc = $('#encode-btc').hasClass('active');
+      const btc = document.getElementById('encode-btc').classList.contains('active');
 
       // Not secure! Don't use in production.
-      const length = (btc && parseInt(scriptVersion.val()) === 0)
+      const length = (btc && parseInt(scriptVersion.value) === 0)
         ? (Math.random() > 0.5 ? 32 : 20)
         : 8 + Math.floor(Math.random() * 32);
       const buffer = new Uint8Array(length);
       for (let i = 0; i < length; i++) {
         buffer[i] = Math.floor(Math.random() * 256);
       }
-      data.val(toHexString(buffer));
-    });
+      data.value = toHexString(buffer);
+    };
 
-    scriptVersion.change(function() {
-      const version = parseInt(scriptVersion.val());
-      if (version < 0) scriptVersion.val(0);
-      if (version > 16) scriptVersion.val(16);
-    });
+    scriptVersion.onchange = () => {
+      const version = parseInt(scriptVersion.value);
+      if (version < 0) scriptVersion.value = 0;
+      if (version > 16) scriptVersion.value = 16;
+    };
   })();
   </script>
 </body>
