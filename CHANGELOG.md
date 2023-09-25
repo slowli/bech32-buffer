@@ -5,6 +5,10 @@ The project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html)
 
 ## [Unreleased]
 
+### Internal improvements
+
+- Update demo web page to use newer version of Bootstrap; get rid of jQuery.
+
 ## 0.2.1 - 2022-09-27
 
 ### Fixed
