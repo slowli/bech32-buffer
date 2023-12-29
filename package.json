@@ -56,7 +56,7 @@
     "babel-preset-minify": "^0.5.1",
     "babelify": "^10.0.0",
     "browserify": "^17.0.0",
-    "chai": "^4.3.4",
+    "chai": "^5.0.0",
     "chai-bytes": "^0.1.2",
     "cross-env": "^7.0.3",
     "dirty-chai": "^2.0.1",
