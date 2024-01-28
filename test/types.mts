@@ -15,7 +15,7 @@ import {
   FiveBitArray,
   from5BitArray,
   to5BitArray,
-} from '..';
+} from 'bech32-buffer';
 
 // `assert` is easier to type-check than `expect`.
 const { assert } = chai.use(chaiBytes);
@@ -58,7 +58,7 @@ function testModifiedEncoder() {
 
 function testBitcoinAddress() {
   let address = new BitcoinAddress('tb', 0, new Uint8Array(20));
-  assert.isTrue((<string> address.encode()).startsWith('tb1'));
+  assert.isTrue((address.encode() as string).startsWith('tb1'));
   assert.equal(address.data.length, 20);
   assert.equal(address.prefix, 'tb');
   assert.equal(address.scriptVersion, 0);

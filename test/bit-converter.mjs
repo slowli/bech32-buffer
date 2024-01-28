@@ -2,8 +2,9 @@
 
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
-import { toBits, fromBits } from '../src/bit-converter';
+import bitConverter from '../src/bit-converter.js';
 
+const { toBits, fromBits } = bitConverter;
 const { expect } = chai.use(chaiBytes);
 
 describe('bit-converter', () => {

@@ -2,9 +2,11 @@
 
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
-import dirtyChai from 'dirty-chai';
 
-import {
+import encoding from '../src/encoding.js';
+import bitConverter from '../src/bit-converter.js';
+
+const {
   expandPrefix,
   CHECKSUM_LENGTH,
   createChecksum,
@@ -12,10 +14,9 @@ import {
   encode,
   decode,
   detectCase,
-} from '../src/encoding';
-import { toBits } from '../src/bit-converter';
-
-const { expect } = chai.use(chaiBytes).use(dirtyChai);
+} = encoding;
+const { toBits } = bitConverter;
+const { expect } = chai.use(chaiBytes);
 
 describe('Bech32 low-level encoding', () => {
   describe('CHECKSUM_LENGTH', () => {
@@ -112,7 +113,7 @@ describe('Bech32 low-level encoding', () => {
     });
 
     it('should return null on no-case message', () => {
-      expect(detectCase('1337')).to.be.null();
+      expect(detectCase('1337')).to.be.null;
     });
 
     it('should error on mixed-case', () => {

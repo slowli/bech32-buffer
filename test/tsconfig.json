@@ -1,13 +1,17 @@
 {
   "compilerOptions": {
     "lib": ["es2015",  "es2017"],
-    "module": "CommonJS",
+    "module": "node16",
     "esModuleInterop": true,
-    "target": "es5",
-    "moduleResolution": "node",
-    "strict": true
+    "paths": {
+      "bech32-buffer": ["../index.d.ts"]
+    },
+    "target": "esnext",
+    "moduleResolution": "node16",
+    "strict": true,
+    "noEmit": true
   },
   "include": [
-    "**/*.ts"
+    "**/*.mts"
   ]
 }

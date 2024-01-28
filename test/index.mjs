@@ -1,9 +1,10 @@
 /* eslint-env node, mocha */
 
+import fs from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { expect } from 'chai';
-import * as bech32 from '../src';
-// Test vectors mentioned in the BIP spec
-import vectors from './vectors.json';
+import bech32 from '../src/index.js';
 
 const { BitcoinAddress } = bech32;
 
@@ -24,6 +25,10 @@ function encodeAddress(prefix, version, data) {
   bech32.to5BitArray(data, converted.subarray(1));
   return bech32.encode5BitArray(prefix, converted);
 }
+
+const vectorsPath = path.join(path.dirname(fileURLToPath(import.meta.url)), './vectors.json');
+const rawJson = await fs.readFile(vectorsPath, { encoding: 'utf-8' });
+const vectors = JSON.parse(rawJson);
 
 describe('bech32', () => {
   describe('encode', () => {
