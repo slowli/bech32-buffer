@@ -1,10 +1,21 @@
-/* eslint-env node, mocha */
+/* eslint-env mocha */
 
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
-import dirtyChai from 'dirty-chai';
 
-import {
+// This awkwardness is required because of difference in transpiling modules for unit
+// and browser tests. Unit tests transpile source files into CommonJS modules
+// with only the default export exposed.
+let bitConverterModule = await import('../src/bit-converter.js');
+if (typeof bitConverterModule.default === 'object') {
+  bitConverterModule = bitConverterModule.default;
+}
+let encodingModule = await import('../src/encoding.js');
+if (typeof encodingModule.default === 'object') {
+  encodingModule = encodingModule.default;
+}
+
+const {
   expandPrefix,
   CHECKSUM_LENGTH,
   createChecksum,
@@ -12,10 +23,9 @@ import {
   encode,
   decode,
   detectCase,
-} from '../src/encoding';
-import { toBits } from '../src/bit-converter';
-
-const { expect } = chai.use(chaiBytes).use(dirtyChai);
+} = encodingModule;
+const { toBits } = bitConverterModule;
+const { expect } = chai.use(chaiBytes);
 
 describe('Bech32 low-level encoding', () => {
   describe('CHECKSUM_LENGTH', () => {
@@ -112,7 +122,8 @@ describe('Bech32 low-level encoding', () => {
     });
 
     it('should return null on no-case message', () => {
-      expect(detectCase('1337')).to.be.null();
+      // eslint-disable-next-line no-unused-expressions
+      expect(detectCase('1337')).to.be.null;
     });
 
     it('should error on mixed-case', () => {
