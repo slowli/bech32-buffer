@@ -1,10 +1,19 @@
-/* eslint-env node, mocha */
+/* eslint-env mocha */
 
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
 
-import encoding from '../src/encoding.js';
-import bitConverter from '../src/bit-converter.js';
+// This awkwardness is required because of difference in transpiling modules for unit
+// and browser tests. Unit tests transpile source files into CommonJS modules
+// with only the default export exposed.
+let bitConverterModule = await import('../src/bit-converter.js');
+if (typeof bitConverterModule.default === 'object') {
+  bitConverterModule = bitConverterModule.default;
+}
+let encodingModule = await import('../src/encoding.js');
+if (typeof encodingModule.default === 'object') {
+  encodingModule = encodingModule.default;
+}
 
 const {
   expandPrefix,
@@ -14,8 +23,8 @@ const {
   encode,
   decode,
   detectCase,
-} = encoding;
-const { toBits } = bitConverter;
+} = encodingModule;
+const { toBits } = bitConverterModule;
 const { expect } = chai.use(chaiBytes);
 
 describe('Bech32 low-level encoding', () => {
@@ -113,6 +122,7 @@ describe('Bech32 low-level encoding', () => {
     });
 
     it('should return null on no-case message', () => {
+      // eslint-disable-next-line no-unused-expressions
       expect(detectCase('1337')).to.be.null;
     });
 

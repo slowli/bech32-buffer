@@ -1,9 +1,15 @@
-/* eslint-env node, mocha */
+/* eslint-env mocha */
 
 import * as chai from 'chai';
 import chaiBytes from 'chai-bytes';
-import bitConverter from '../src/bit-converter.js';
 
+// This awkwardness is required because of difference in transpiling modules for unit
+// and browser tests. Unit tests transpile source files into CommonJS modules
+// with only the default export exposed.
+let bitConverter = await import('../src/bit-converter.js');
+if (typeof bitConverter.default === 'object') {
+  bitConverter = bitConverter.default;
+}
 const { toBits, fromBits } = bitConverter;
 const { expect } = chai.use(chaiBytes);
 
