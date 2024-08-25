@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,shrink-to-fit=no">
+  <meta name="keywords" content="bech32, base32, bitcoin">
+  <meta name="description" content="Demo of bech32-buffer package capabilities">
+
+  <title>Bech32 Demo</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+  <style>
+  textarea {
+    resize: none;
+    height: 80px;
+  }
+
+  input[type=number] {
+    max-width: 5rem;
+  }
+
+  .content {
+    max-width: 1080px;
+    margin: 0 auto;
+    padding: 1rem;
+  }
+
+  .body-header {
+    padding: 1rem;
+    background: #f4f4f4;
+    border-bottom: 1px solid #eee;
+    margin-bottom: 2rem;
+  }
+
+  .page-footer {
+    margin: 4rem -0.5rem 0 -0.5rem;
+    padding: 2rem 0 1.5rem;
+    border-top: 1px solid rgba(0,0,0,0.15);
+  }
+
+  .align-height {
+    min-height: 152px;
+  }
+  .card-header.align-header-height {
+    height: 49px;
+  }
+
+  .qr-placeholder {
+    display: inline-block;
+    width: 132px;
+    height: 132px;
+    background: rgba(0,0,0,0.15);
+    color: white;
+  }
+  .qr-placeholder:before {
+    content: '?';
+    font-size: 72px;
+    line-height: 1;
+    height: 72px;
+    position: relative;
+    top: 50%;
+    margin-top: -36px;
+    display: inline-block;
+  }
+
+  #encode:after {
+    content: ' ↓';
+  }
+  #decode:after {
+    content: ' ↑';
+  }
+  @media (min-width: 768px) {
+    #encode:after {
+      content: ' →';
+    }
+    #decode:after {
+      content: ' ←';
+    }
+  }
+  </style>
+</head>
+<body>
+  <header class="body-header">
+    <div class="content">
+      <h1>bech32-buffer</h1>
+      <p class="lead">Bech32 is a Bitcoin address format proposed by Pieter Wuille and Greg Maxwell in <a href="https://github.com/bitcoin/bips/blob/master/bip-0173.mediawiki">BIP 173</a> and later amended by <a href="https://github.com/bitcoin/bips/blob/master/bip-0350.mediawiki">BIP 350</a>.
+      Besides Bitcoin addresses, Bech32 can encode any short binary data.</p>
+    </div>
+  </header>
+
+  <div class="content">
+    <div class="row">
+      <div class="col-md-6 mb-3 mb-md-0">
+        <div class="card">
+          <div class="card-header align-header-height">
+            <ul class="nav nav-tabs card-header-tabs">
+              <li class="nav-item" role="presentation">
+                <button class="nav-link active" id="encode-btc-tab" data-bs-toggle="tab" data-bs-target="#encode-btc" type="button" role="tab" aria-controls="home" aria-selected="true">BTC Address</button>
+              </li>
+              <li class="nav-item">
+                <button class="nav-link" id="encode-data-tab" data-bs-toggle="tab" data-bs-target="#encode-data" type="button" role="tab" aria-controls="home" aria-selected="false">Data</button>
+              </li>
+            </ul>
+          </div>
+          <div class="card-block p-2">
+            <form>
+              <div class="align-height tab-content">
+                <div class="tab-pane" id="encode-data" role="tabpanel" aria-labelledby="encode-data-tab">
+                  <div class="mb-3 row">
+                    <label for="hrp" class="col-3 col-form-label">Tag</label>
+                    <div class="col-9">
+                      <input type="text" id="hrp" class="form-control" placeholder="Tag"/>
+                    </div>
+                    <div class="col-12 form-text text-muted small">A short tag describing what a Bech32-encoded string is used for.</div>
+                  </div>
+                  <div class="mb-3 row">
+                    <span class="col-3 col-form-label">Encoding</span>
+                    <div class="col-9">
+                      <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="encoding-options" id="encoding-bech32" autocomplete="off">
+                        <label for="encoding-bech32" class="btn btn-outline-primary" title="Original encoding proposed in BIP 173">Bech32</label>
+                        <input type="radio" class="btn-check" name="encoding-options" id="encoding-bech32m" autocomplete="off" checked>
+                        <label for="encoding-bech32m" class="btn btn-outline-primary" title="Amended encoding from BIP 350">Bech32m</label>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="tab-pane active" id="encode-btc" role="tabpanel" aria-labelledby="encode-btc-tab">
+                  <div class="mb-3 row">
+                    <span class="col-3 col-form-label">Network</span>
+                    <div class="col-9">
+                      <div class="btn-group" role="group">
+                        <input type="radio" class="btn-check" name="btc-network-options" id="btc-mainnet" autocomplete="off" checked>
+                        <label for="btc-mainnet" class="btn btn-outline-primary">Mainnet</label>
+                        <input type="radio" class="btn-check" name="btc-network-options" id="btc-testnet" autocomplete="off">
+                        <label for="btc-testnet" class="btn btn-outline-primary">Testnet</label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-3 row">
+                    <label for="script-version" class="col-3 col-form-label">Script ver.</label>
+                    <div class="col-9">
+                      <input type="number" id="script-version" min="0" max="16" size="6" value="0">
+                    </div>
+                    <div class="col-12 form-text">Note that version 0 scripts should have length 20 or 32 bytes.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="mb-4">
+                <label for="data" class="form-label">Data</label>
+                <textarea id="data" class="form-control" placeholder="Hex data"></textarea>
+                <div class="form-text text-muted small">Binary data (in hex) to be encoded into Bech32.</div>
+              </div>
+
+              <button type="button" id="encode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="bottom" data-bs-content="Encode">Encode</button>
+              <a id="random" title="Generate random data" class="ms-3" href="#">Random data</a>
+            </form>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-md-6">
+        <div class="card">
+          <h3 class="card-header align-header-height">Bech32</h3>
+          <div id="qrcode" class="card-img-top text-center py-2 align-height" title="QR code with the latest encoded or decoded message"><div class="qr-placeholder"></div></div>
+          <div class="card-block p-2">
+            <form>
+              <div class="mb-4">
+                <label for="encoded" class="form-label">Encoded data</label>
+                <textarea id="encoded" class="form-control" placeholder="Bech32 string"></textarea>
+                <div class="form-text text-muted small">Encoded Bech32 string.</div>
+              </div>
+
+              <button type="button" id="decode" class="btn btn-primary" data-bs-container="body" data-bs-toggle="popover" data-bs-placement="top" data-bs-content="Decode">Decode</button>
+            </form>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <footer class="page-footer small text-muted">
+      <span class="copyright">© 2023 Alex Ostrovski</span>
+      <div class="float-none float-sm-end">
+        <a href="https://github.com/slowli/bech32-buffer">GitHub</a>&nbsp;•
+        <a href="https://npmjs.com/package/bech32-buffer">Npm</a>&nbsp;•
+        <a href="./assets/js/bech32-buffer.min.js" download="bech32-buffer.min.js">Browser version</a>
+      </div>
+    </footer>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  <script src="./assets/js/qrcode.min.js"></script>
+  <script src="./assets/js/bech32-buffer.min.js"></script>
+
+  <script>
+  /* eslint-env browser */
+  /* global bech32, bootstrap */
+  (function () {
+    /**
+     * Converts a byte array into a hex string.
+     */
+    function toHexString(buffer) {
+      return buffer.reduce((s, byte) => {
+        let hex = byte.toString(16);
+        if (hex.length === 1) hex = '0' + hex;
+        return s + hex;
+      }, '');
+    }
+
+    /**
+     * Converts a hex string into a byte array.
+     *
+     * @returns {?Uint8Array}
+     *   decoded array, or `null` if the supplied string is not a valid hex string
+     */
+    function fromHexString(str) {
+      if (str.length % 2 !== 0 || !/^[0-9a-f]+$/i.test(str)) {
+        return null;
+      }
+      let buffer = new Uint8Array(str.length / 2);
+      for (let i = 0; i < buffer.length; i++) {
+        buffer[i] = parseInt(str.substring(2 * i, 2 * i + 2), 16);
+      }
+      return buffer;
+    }
+
+    const hrp = document.getElementById('hrp');
+    const data = document.getElementById('data');
+    const encoded = document.getElementById('encoded');
+    const encodeBtn = document.getElementById('encode');
+    const decodeBtn = document.getElementById('decode');
+    const randomBtn = document.getElementById('random');
+    const scriptVersion = document.getElementById('script-version');
+
+    const timeouts = {};
+
+    function report(type, btn, message) {
+      const id = btn.id;
+      const timeout = timeouts[id];
+      if (timeout) clearTimeout(timeout);
+
+      const popover = bootstrap.Popover.getInstance(btn);
+      popover.setContent({
+        '.popover-body': '<span class="text-' + type + '">' + message + '</span>'
+      });
+      popover.show();
+      timeouts[id] = setTimeout(() => {
+        popover.hide();
+        delete timeouts[id];
+      }, 3000);
+    }
+
+    document.querySelectorAll('[data-bs-toggle="popover"]').forEach((element) => {
+      new bootstrap.Popover(element, {
+        trigger: 'manual',
+        html: true,
+      });
+    });
+
+    encodeBtn.onclick = () => {
+      let enc;
+      const btc = document.getElementById('encode-btc').classList.contains('active');
+
+      try {
+        const buffer = fromHexString(data.value);
+        if (!buffer) throw new TypeError('Invalid hex encoding of data');
+
+        if (btc) {
+          const prefix = document.getElementById('btc-mainnet').checked ? 'bc' : 'tb';
+          const version = parseInt(scriptVersion.value);
+          const btcAddress = new bech32.BitcoinAddress(prefix, version, buffer);
+          enc = btcAddress.encode();
+        } else {
+          const encoding = document.getElementById('encoding-bech32').checked
+            ? 'bech32'
+            : 'bech32m';
+          enc = bech32.encode(hrp.value, buffer, encoding);
+        }
+        encoded.value = enc;
+      } catch (e) {
+        report('danger', encodeBtn, 'Error: ' + e.message);
+        return;
+      }
+
+      report('success', encodeBtn, 'Data encoded (' + enc.length + ' chars)');
+      const qr = qrcode(0, 'M');
+      qr.addData(enc.toUpperCase(), 'Alphanumeric');
+      qr.make();
+      document.getElementById('qrcode').innerHTML = qr.createSvgTag(4, 0);
+    };
+
+    decodeBtn.onclick = () => {
+      let dec;
+      const btc = document.getElementById('encode-btc').classList.contains('active');
+
+      try {
+        if (btc) {
+          dec = bech32.BitcoinAddress.decode(encoded.value);
+          scriptVersion.value = dec.scriptVersion;
+
+          const selectedNetwork = (dec.prefix === 'bc')
+            ? document.getElementById('btc-mainnet')
+            : document.getElementById('btc-testnet');
+          document.querySelector('input[name=btc-network-options]').parentElement.classList.remove('active');
+          selectedNetwork.checked = true;
+          selectedNetwork.parentElement.classList.add('active');
+        } else {
+          dec = bech32.decode(encoded.value);
+          hrp.value = dec.prefix;
+
+          const selectedEncoding = (dec.encoding === 'bech32')
+            ? document.getElementById('encoding-bech32')
+            : document.getElementById('encoding-bech32m');
+          document.querySelector('input[name=encoding-options]').parentElement.classList.remove('active');
+          selectedEncoding.checked = true;
+          selectedEncoding.parentElement.classList.add('active');
+        }
+        data.value = toHexString(dec.data);
+      } catch (e) {
+        report('danger', decodeBtn, 'Error: ' + e.message);
+        return;
+      }
+
+      report('success', decodeBtn, 'Data decoded (' + dec.data.length + ' bytes)');
+      const qr = qrcode(0, 'M');
+      qr.addData(encoded.value.toUpperCase(), 'Alphanumeric');
+      qr.make();
+      document.getElementById('qrcode').innerHTML = qr.createSvgTag(4, 0);
+    };
+
+    randomBtn.onclick = (e) => {
+      e.preventDefault();
+      const btc = document.getElementById('encode-btc').classList.contains('active');
+
+      // Not secure! Don't use in production.
+      const length = (btc && parseInt(scriptVersion.value) === 0)
+        ? (Math.random() > 0.5 ? 32 : 20)
+        : 8 + Math.floor(Math.random() * 32);
+      const buffer = new Uint8Array(length);
+      for (let i = 0; i < length; i++) {
+        buffer[i] = Math.floor(Math.random() * 256);
+      }
+      data.value = toHexString(buffer);
+    };
+
+    scriptVersion.onchange = () => {
+      const version = parseInt(scriptVersion.value);
+      if (version < 0) scriptVersion.value = 0;
+      if (version > 16) scriptVersion.value = 16;
+    };
+  })();
+  </script>
+</body>
+</html>
