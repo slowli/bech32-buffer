@@ -11,6 +11,7 @@ module.exports = {
   plugins: [
     commonjs({
       include: ['node_modules/**'],
+      strictRequires: 'auto',
     }),
     babel({
       babelHelpers: 'bundled',
